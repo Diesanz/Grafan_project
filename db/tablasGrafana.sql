@@ -1,6 +1,10 @@
-create database grafana
-create user 'grafanareader'@'localhost' identified by 'Grupo6esi';
-grant all privileges on grafana.* TO 'grafanareader'@'localhost';
+-- Eliminar las tablas si existen
+DROP TABLE IF EXISTS cpu;
+DROP TABLE IF EXISTS memoria;
+DROP TABLE IF EXISTS disco;
+DROP TABLE IF EXISTS entradasalida;
+DROP TABLE IF EXISTS procesos;
+DROP TABLE IF EXISTS red;
 
 -- Crear las tablas con correcciones
 CREATE TABLE cpu (
