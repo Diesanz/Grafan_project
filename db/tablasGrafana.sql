@@ -44,6 +44,7 @@ CREATE TABLE red (
     PRIMARY KEY(timestamp)
 );
 
+
 DELIMITER //
 
 CREATE PROCEDURE `AddDatos` (
