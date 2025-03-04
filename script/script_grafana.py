@@ -25,7 +25,6 @@ def collect_data():
     return data
 
 def insert_data(data: DatosSistema, conn):
-    
     """Inserta los datos en la base de datos usando el procedimiento almacenado"""
     if conn:
         try:
