@@ -24,10 +24,9 @@ def collect_data():
 
     return data
 
-def insert_data(data: DatosSistema):
-    """Inserta los datos en la base de datos usando el procedimiento almacenado"""
-    conn = get_connection()
+def insert_data(data: DatosSistema, conn):
     
+    """Inserta los datos en la base de datos usando el procedimiento almacenado"""
     if conn:
         try:
             cursor = conn.cursor()
@@ -37,17 +36,27 @@ def insert_data(data: DatosSistema):
             print("Datos insertados correctamente en la BD.")
         except Error as e:
             print(f"Error al insertar datos: {e}")
-        finally:
-            close_connection(conn)
 
-def main():
-    """Ejecuta la recolección de datos e inserción en la BD en intervalos regulares"""
-    while True:
-        data = collect_data()
-        if data:
-            insert_data(data)
 
-        time.sleep(10)  # Espera 10 segundos antes de la siguiente medición
+conn = None
 
-if __name__ == '__main__':
-    main()
+try:
+    
+    conn = get_connection()
+
+    if conn:
+        print("Conexión a la base de datos establecida correctamente")
+
+        """Ejecuta la recolección de datos e inserción en la BD en intervalos regulares"""
+        while True:
+            data = collect_data()
+            if data:
+                insert_data(data, conn)
+
+            time.sleep(10)  # Espera 10 segundos antes de la siguiente medición
+except Error as e:
+    print(f"Error al conectar bas de datos: {e}")
+finally:
+    if conn:  # Si la conexión fue establecida, cierra la conexión
+        close_connection(conn)  # Cerrar la conexión al finalizar el programa
+
