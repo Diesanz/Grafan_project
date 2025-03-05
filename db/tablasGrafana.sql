@@ -3,8 +3,11 @@ DROP TABLE IF EXISTS cpu;
 DROP TABLE IF EXISTS memoria;
 DROP TABLE IF EXISTS disco;
 DROP TABLE IF EXISTS entradasalida;
+DROP TABLE IF EXISTS num_procesos;
 DROP TABLE IF EXISTS procesos;
 DROP TABLE IF EXISTS red;
+
+DROP PROCEDURE IF EXISTS AddDatos;
 
 -- Crear las tablas con correcciones
 CREATE TABLE cpu (
@@ -33,11 +36,18 @@ CREATE TABLE entradasalida (
     PRIMARY KEY(timestamp)
 );
 
+CREATE TABLE num_procesos(
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    numero INT NOT NULL,
+    PRIMARY KEY(timestamp)
+);
+
 CREATE TABLE procesos (
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     id INT NOT NULL,
-    activo TINYINT(1) NOT NULL,  -- tinyint(1) = booleano
-    PRIMARY KEY(timestamp)
+    nombre VARCHAR(255) NOT NULL,
+    exe VARCHAR(255) NOT NULL,
+    activo VARCHAR(255) NOT NULL  -- tinyint(1) = booleano
 );
 
 CREATE TABLE red (
@@ -58,8 +68,7 @@ CREATE PROCEDURE `AddDatos` (
     IN `mem_swap` FLOAT,
     IN `espacio_disco` FLOAT,
     IN `io_operaciones` INT,
-    IN `proc_id` INT,
-    IN `proc_activo` TINYINT(1),
+    IN `num_proc` INT,
     IN `bytes_env` INT,
     IN `bytes_rec` INT,
     IN `conexiones` INT
@@ -69,6 +78,7 @@ BEGIN
 
     -- Manejo de errores con ROLLBACK si hay fallo
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
+
     BEGIN
         ROLLBACK; -- Revertir cambios si hay error
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'ERROR al insertar datos';
@@ -84,8 +94,9 @@ BEGIN
 
     INSERT INTO entradasalida (timestamp, operaciones) VALUES (ts, io_operaciones);
 
-    INSERT INTO procesos (timestamp, id, activo) VALUES (ts, proc_id, proc_activo);
-    
+    INSERT INTO num_procesos (timestamp, numero) VALUES (ts, num_proc);
+
+    -- Insertar información de red
     INSERT INTO red (timestamp, bytes_enviados, bytes_recibidos, conexiones_activas) VALUES (ts, bytes_env, bytes_rec, conexiones);
 
     COMMIT; -- Confirmar los cambios si todo va bien

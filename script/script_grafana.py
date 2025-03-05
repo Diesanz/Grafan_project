@@ -8,6 +8,18 @@ from datos_sistema import DatosSistema
 
 def collect_data():
     """Recolecta los datos del sistema y los almacena en un objeto DatosSistema"""
+    # Obtener detalles de los procesos
+    proc_detail = [
+        {
+            "pid": proc.info["pid"],
+            "name": proc.info["name"],
+            "exe": proc.info["exe"] if proc.info["exe"] else "N/A",
+            "status": proc.info["status"]
+        }
+        for proc in psutil.process_iter(['pid', 'name', 'exe', 'status'])
+        if proc.info["status"] == "running"
+    ]
+
     data = DatosSistema(
         carga_cpu=psutil.cpu_percent(interval=1),
         frecuencia_cpu=psutil.cpu_freq().current,
@@ -15,8 +27,10 @@ def collect_data():
         mem_swap=psutil.swap_memory().percent,
         espacio_disco=psutil.disk_usage('/').percent,
         io_operaciones=psutil.disk_io_counters().read_count,
-        proc_id=0,  # ID de proceso no aplicable en este contexto
-        proc_activo=0,  # No es relevante aquí
+        
+        proc_detail=proc_detail,  # Lista detallada de procesos
+        num_proc=len(proc_detail),  # Número de procesos en ejecución
+        
         bytes_env=psutil.net_io_counters().bytes_sent,
         bytes_rec=psutil.net_io_counters().bytes_recv,
         conexiones=len(psutil.net_connections(kind='inet'))
@@ -24,16 +38,31 @@ def collect_data():
 
     return data
 
+
+
 def insert_data(data: DatosSistema, conn):
     """Inserta los datos en la base de datos usando el procedimiento almacenado"""
     if conn:
         try:
             cursor = conn.cursor()
+
+            # Inicia una transacción
+            conn.begin()
+
+            # Primero insertamos los procesos (procesos_en_ejecucion)
+            cursor.executemany("""INSERT INTO procesos (id, nombre, exe, activo)
+                                VALUES (%s, %s, %s, %s)""", data.to_tuple_proc_info())
+
+            # Luego, llamamos al procedimiento almacenado
             cursor.callproc("AddDatos", data.to_tuple()) 
+
+            # Confirmamos la transacción
             conn.commit()
+
             cursor.close()
             print("Datos insertados correctamente en la BD.")
         except Error as e:
+            conn.rollback()  # Si algo falla, revertimos la transacción
             print(f"Error al insertar datos: {e}")
 
 
