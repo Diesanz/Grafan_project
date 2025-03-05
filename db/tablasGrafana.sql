@@ -44,10 +44,12 @@ CREATE TABLE num_procesos(
 
 CREATE TABLE procesos (
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    id INT NOT NULL,
+    pid INT NOT NULL,
+    usuario VARCHAR(255) NOT NULL,
     nombre VARCHAR(255) NOT NULL,
-    exe VARCHAR(255) NOT NULL,
-    activo VARCHAR(255) NOT NULL  -- tinyint(1) = booleano
+    ruta VARCHAR(255) NOT NULL,
+    estado VARCHAR(255) NOT NULL -- tinyint(1) = booleano
+    
 );
 
 CREATE TABLE red (

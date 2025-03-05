@@ -23,4 +23,4 @@ class DatosSistema():
                 self.bytes_env, self.bytes_rec, self.conexiones)
     
     def to_tuple_proc_info(self):
-        return [(proc["pid"], proc["name"], proc["exe"], proc["status"]) for proc in self.proc_info]
+        return [(proc["pid"], proc["username"], proc["name"], proc["exe"], proc["status"]) for proc in self.proc_info]
