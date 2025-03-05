@@ -9,7 +9,7 @@ def get_connection():
         port = int(3306)
         database = "grafana"
         user = "grafanaReader"
-        password = "password"
+        password = "Grupo6esi"
 
         # Conéctate a MariaDB
         connection = pymysql.connect(
