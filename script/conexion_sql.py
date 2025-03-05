@@ -5,11 +5,11 @@ import pymysql
 def get_connection():
     try:
         # Obtén los secretos desde variables de entorno
-        host = os.getenv("DB_HOST", "localhost")
-        port = int(os.getenv("DB_PORT", 3306))
-        database = os.getenv("DB_NAME", "grafana")
-        user = os.getenv("DB_USER", "grafanaReader")
-        password = os.getenv("DB_PASSWORD", "Grupo6esi")
+        host = "localhost"
+        port = int(3306)
+        database = "grafana"
+        user = "grafanaReader"
+        password = "password"
 
         # Conéctate a MariaDB
         connection = pymysql.connect(
