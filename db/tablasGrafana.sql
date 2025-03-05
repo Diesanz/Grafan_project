@@ -40,7 +40,7 @@ CREATE TABLE num_procesos(
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     numero INT NOT NULL,
     PRIMARY KEY(timestamp)
-);
+); --esta tabla se puede quitar se puede hacer un count de procesos
 
 CREATE TABLE procesos (
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -52,8 +52,7 @@ CREATE TABLE procesos (
     usuario VARCHAR(255) NOT NULL,
     nombre VARCHAR(255) NOT NULL,
     ruta VARCHAR(255) NOT NULL,
-    estado VARCHAR(255) NOT NULL -- tinyint(1) = booleano
-    
+    estado VARCHAR(255) NOT NULL -- tinyint(1) = booleano 
 );
 
 CREATE TABLE red (

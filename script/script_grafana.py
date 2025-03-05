@@ -59,7 +59,7 @@ def insert_data(data: DatosSistema, conn):
 
             # Primero insertamos los procesos (procesos_en_ejecucion)
             cursor.executemany("""INSERT INTO procesos (pid, cpu_percent, memory_percent, vsz, rss, usuario, nombre, ruta, estado)
-                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""", data.to_tuple_proc_info())
+                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""", data.to_tuple_proc_info()) #se realiza executemany para no hacer un bucle y ser más eficiente
 
             # Luego, llamamos al procedimiento almacenado
             cursor.callproc("AddDatos", data.to_tuple()) 

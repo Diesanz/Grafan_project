@@ -24,4 +24,4 @@ class DatosSistema():
     
     def to_tuple_proc_info(self):
         return [(proc["pid"], proc["cpu_percent"], proc["memory_percent"], proc["vsz"], proc["rss"], 
-                proc["username"], proc["name"], proc["exe"], proc["status"]) for proc in self.proc_info]
+                proc["username"], proc["name"], proc["exe"], proc["status"]) for proc in self.proc_info] #devuelve una lista de tuplas
