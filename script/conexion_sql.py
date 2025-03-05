@@ -8,8 +8,8 @@ def get_connection():
         host = "localhost"
         port = int(3306)
         database = "grafana"
-        user = "grafanareader"
-        password = "Grupo6esi"
+        user = "grafanaReader"
+        password = "password"
 
         # Conéctate a MariaDB
         connection = pymysql.connect(

@@ -15,10 +15,13 @@ def collect_data():
             "name": proc.info["name"],
             "exe": proc.info["exe"] if proc.info["exe"] else f"[{proc.info["name"]}]",
             "status": proc.info["status"], 
-            "username": proc.info["username"] if proc.info["username"] else "N/A"
-
+            "username": proc.info["username"] if proc.info["username"] else "N/A",
+            "cpu_percent": proc.info["cpu_percent"],
+            "memory_percent": proc.info["memory_percent"],
+            "vsz": proc.memory_info().vms,
+            "rss": proc.memory_info().rss
         }
-        for proc in psutil.process_iter(['pid', 'name', 'exe', 'status', 'username'])
+        for proc in psutil.process_iter(['pid', 'name', 'exe', 'status', 'username', 'cpu_percent', 'memory_percent'])
         #if proc.info["status"] == "running"
     ]
 
@@ -55,8 +58,8 @@ def insert_data(data: DatosSistema, conn):
             cursor.execute("DELETE FROM procesos;")
 
             # Primero insertamos los procesos (procesos_en_ejecucion)
-            cursor.executemany("""INSERT INTO procesos (pid, usuario, nombre, ruta, estado)
-                                VALUES (%s, %s, %s, %s, %s)""", data.to_tuple_proc_info())
+            cursor.executemany("""INSERT INTO procesos (pid, cpu_percent, memory_percent, vsz, rss, usuario, nombre, ruta, estado)
+                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""", data.to_tuple_proc_info())
 
             # Luego, llamamos al procedimiento almacenado
             cursor.callproc("AddDatos", data.to_tuple()) 

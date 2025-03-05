@@ -45,6 +45,10 @@ CREATE TABLE num_procesos(
 CREATE TABLE procesos (
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     pid INT NOT NULL,
+    cpu_percent FLOAT NOT NULL,
+    memory_percent FLOAT NOT NULL,
+    vsz FLOAT NOT NULL,
+    rss FLOAT NOT NULL,
     usuario VARCHAR(255) NOT NULL,
     nombre VARCHAR(255) NOT NULL,
     ruta VARCHAR(255) NOT NULL,
