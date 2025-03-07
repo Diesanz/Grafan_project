@@ -2,6 +2,18 @@
 \usepackage{graphicx} % Required for inserting images
 \usepackage[spanish]{babel}
 \usepackage{float}
+\usepackage{minted}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+    language=bash,
+    basicstyle=\ttfamily\small,  % Tipo de letra monoespaciada
+    keywordstyle=\color{blue},   % Color de palabras clave
+    stringstyle=\color{red},     % Color de strings
+    commentstyle=\color{gray},   % Color de comentarios
+    showstringspaces=false       % No mostrar espacios en strings
+}
 
 \begin{document}
 
@@ -52,5 +64,35 @@ Según estas características algunos casos de uso son los siguientes:
     \item Observabilidad de microservicios: monitorizar la salud y rendimiento de estos para identificar problemas de comunicación entre servicios.
     \item Seguridad informática: visualizar datos de seguridad, como registros de acceso, eventos de autenticación y actividad sospechosa, para detectar y responder a las amenazas de manera más eficiente.
 \end{enumerate}
+
+\section{Instalación Grafana}
+
+Para realizar la instalación de Grafana en su versión Standalone Linux Binaries, se ejecutaron los siguientes comandos, que descargarán y descomprimirán el archivo respectivamente:
+
+\begin{minted}{bash}
+- wget https://dl.grafana.com/enterprise/release/grafana-
+enterprise-11.5.2.linux-amd64.tar.gz
+- tar -zxvf grafana-enterprise-11.5.2.linux-amd64.tar.gz
+\end{minted}
+
+Una vez descomprimido todo se debe de iniciar el servidor con el comando \lstinline[language=bash]|stemctl start grafana-server.service| 
+y podemos confirmar que se ha iniciado si ejecutamos \lstinline[language=bash]|systemctl status grafana-server.service|.\\
+
+Con el servidor de Grafana en funcionamiento, se puede acceder a este mediante la URL  ''http://virtual.lab.inf.uva.es:31222'' (en nuestro caso).
+
+\section{Base de datos}
+
+Grafana necesita estar conectada a una base de datos para poder crear sus tablas y esquemas para mostrar los valores que se almacenan en ellas. Utilizaremos MySQL, en donde Grafana puede utilizarlo de dos maneras distintas:
+
+\begin{itemize}
+    \item Como base de datos interna de Grafana, para usuarios y permisos, dashboards y paneles o ajustes o auditorías.
+    \item Como fuente de datos externa, en donde Grafana realizará consultas SQL a los datos y creará gráficos para mostrarlos, construyendo así dashboards dinámicos.
+\end{itemize}
+
+En nuestra práctica hemos conectado una base de datos MySQL llamada ''grafana'' con URL host ''localhost:3306'' debido a que 3306 es el puerto predeterminado de MySQL.
+
+\newpage
+Aquí podríamos explicar el esquema E/R y la estructura de la bbdd cuando esté completa
+\newpage
 
 \end{document}
