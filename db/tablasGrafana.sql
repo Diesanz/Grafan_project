@@ -91,14 +91,16 @@ BEGIN
 
     START TRANSACTION; -- Empezar una transacción
 
+    DELETE FROM cpu; --Se pregunta por la carga y frecuencia instantane por eso no hace falta llevar un registro de todos los valores
     INSERT INTO cpu (timestamp, carga, frecuencia) VALUES (ts, carga_cpu, frecuencia_cpu);
 
     INSERT INTO memoria (timestamp, ram, swap) VALUES (ts, mem_ram, mem_swap);
 
+    DELETE FROM disco;
     INSERT INTO disco (timestamp, espacio) VALUES (ts, espacio_disco);
 
     INSERT INTO entradasalida (timestamp, operaciones) VALUES (ts, io_operaciones);
-
+    
     INSERT INTO num_procesos (timestamp, numero) VALUES (ts, num_proc);
 
     -- Insertar información de red
