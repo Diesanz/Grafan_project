@@ -5,6 +5,7 @@
 \usepackage{minted}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{hyperref}
 
 \lstset{
     language=bash,
@@ -17,22 +18,22 @@
 
 \begin{document}
 
+% Portada
 \begin{titlepage}
     \centering
-    \vspace{5cm}
-    {\Huge \textsc{\textbf{Práctica 1.: Grafana}}}\\
-    \vspace{1cm}
-    {\large \textsc{Evaluación de Sistemas Informáticos}}\\
-    \vspace{1cm}
-    {\large \textsc{3º Grado en Informática. Mención de TI}}\\
-    \vspace{1cm}
-    {\large \textsc{Grupo 6}}\\
-    \vspace{1cm}
-    {\large \textsc{Autores:}}\\
-    {\large \textsc{Víctor Fernández Sánchez}}\\
-    {\large \textsc{Gonzalo Sánchez Maroto}}\\
-    {\large \textsc{Diego Sanz Santos}}\\
-    {\large \textsc{Rubén Verduras Cavada}}\\
+    \includegraphics[width=0.4\textwidth]{logo.png} % Ajusta el nombre de la imagen según corresponda
+    \\[2cm]
+    {\Huge \textbf{Práctica 1: Grafana}}\\[1.5cm]
+    {\Large \textit{Evaluación de Sistemas Informáticos}}\\[1cm]
+    {\large 3º Grado en Informática. Mención de TI}\\[1cm]
+    {\large Grupo 6}\\[1.5cm]
+    \textbf{Autores:}\\[0.7cm]
+    Víctor Fernández Sánchez\\
+    Gonzalo Sánchez Maroto\\
+    Diego Sanz Santos\\
+    Rubén Verduras Cavada\\[2cm]
+    \vfill
+    \today
 \end{titlepage}
 
 \tableofcontents % Componer y mostar el índice
@@ -95,4 +96,123 @@ En nuestra práctica hemos conectado una base de datos MySQL llamada ''grafana''
 Aquí podríamos explicar el esquema E/R y la estructura de la bbdd cuando esté completa
 \newpage
 
+\section{Servicio de Ubuntu}\label{sec:servicio-ubuntu}
+Este código define un servicio de \textbf{systemd} de Ubuntu, que ejecuta un script desarrollado en python3 dedicado a la recolección de datos del servidor y enviarlos a Grafana. El servicio depende de MySQL y se reinicia automáticamente si falla.
+Este código se encuentra dentro de \textbf{/etc/systemd/system/} con el nombre de \textbf{programa-grupo6.service}
+
+\begin{minted}{bash}
+[Unit]
+Description=Daemon programa esi
+After=network.target
+After=mysql.service
+Requires=mysql.service
+
+[Service]
+ExecStart=/usr/bin/python3 /home/usuario/esi/script/script_grafana.py
+WorkingDirectory=/home/usuario/esi
+Restart=always
+User=usuario
+Group=usuario
+
+[Install]
+WantedBy=multi-user.target 
+\end{minted}
+
+\textit{Explicación:}
+\begin{itemize}
+    \item \textbf{[Unit]}: Define la descripción y dependencias del servicio. Indica que se ejecuta después de que la red y MySQL estén activos.
+    \item \textbf{[Service]}: Especifica el comando para iniciar el script, su directorio de trabajo y que se reiniciará en caso de fallo. Además, se ejecutará con el usuario \textit{usuario}.
+    \item \textbf{[Install]}: Indica que el servicio debe ejecutarse en el nivel \textit{multi-user.target}.
+\end{itemize}
+
+\section{Explicación del código}
+\subsection{Bucle while del servicio}\label{subsec:bucle-while}
+
+\begin{minted}{python}
+conn = None
+
+try:
+    
+    conn = get_connection()
+
+    if conn:
+        print("Conexión a la base de datos establecida correctamente")
+
+        """Ejecuta la recolección de datos e inserción en la BD en intervalos regulares"""
+        while True:
+            data = collect_data()
+            if data:
+                insert_data(data, conn)
+
+            time.sleep(5)  # Espera 10 segundos antes de la siguiente medición
+except Error as e:
+    print(f"Error al conectar bas de datos: {e}")
+finally:
+    if conn:  # Si la conexión fue establecida, cierra la conexión
+        close_connection(conn)  # Cerrar la conexión al finalizar el programa
+\end{minted}
+\textit{Explicación}:
+\begin{itemize}
+    \item \textbf{Establecimiento de conexión}: Se establece la conexión con la base de datos mediante el método \textbf{get-connection()}, que se explica más adelante en la sección \autoref{subsec:conexión-db}.
+    \item \textbf{Comprobación de conexión}: Se verifica si la conexión fue exitosa.
+    \item \textbf{Bucle while}: Este es un bucle infinito que estará activo mientras el servicio siga en ejecución. Dentro de este bucle:
+    \begin{itemize}
+        \item Se recopilan datos utilizando el método \textbf{collect-data()}, que se explica más adelante en la sección \autoref{subsec:recolección-datos}.
+        \item Se insertan los datos recogidos en la base de datos con el método \textbf{insert\_data()}, que se explica más adelante en la sección \autoref{subsec:almacenamiento-datos}.
+        \item Se espera 5 segundos antes de repetir el proceso.
+    \end{itemize}
+    \item \textbf{Manejo de errores}: Captura posibles errores de conexión con la base de datos.
+    \item \textbf{Cierre de conexión}: Se cierra la conexión, si existe, dentro del bloque \texttt{finally} para evitar posibles fugas de recursos mediante el método \textbf{close\_connection(conn)}, que se explica más adelante en la sección \autoref{subsec:conexión-db}.
+\end{itemize}
+
+\subsection{Conexión a la base de datos}\label{subsec:conexión-db}
+Este código define una conexión con la base de datos \textbf{MySQL} en Ubuntu. El script está desarrollado en Python y maneja tanto la conexión con la base de datos como su cierre.
+
+\begin{minted}{python}
+def get_connection():
+
+    try:
+        host = "localhost"
+        port = 3306
+        database = "grafana"
+        user = "grafanareader"
+        password = "Grupo6esi"
+        
+        connection = pymysql.connect(
+            host=host,
+            port=port,
+            database=database,
+            user=user,
+            password=password,
+            charset='utf8mb4',  # Evita problemas de encoding
+            cursorclass=pymysql.cursors.DictCursor
+        )
+        return connection
+    except pymysql.MySQLError as e:
+        print("Error al conectarse a la base de datos:", e)
+        return None
+
+def close_connection(connection):
+
+    if connection:
+        connection.close()
+\end{minted}
+
+\textit{Explicación}:
+\begin{itemize}
+    \item \textbf{get\_connection()}: Establece una conexión con la base de datos MySQL. Para ello, se deben especificar el \textit{host, puerto, nombre de la base de datos, usuario y contraseña}. Retorna un objeto de conexión \textbf{pymysql.connections.Connection} si la conexión es exitosa; en caso contrario, retorna \textbf{None}.
+    \item \textbf{close\_connection()}: Cierra una conexión existente con la base de datos. Requiere como parámetro un objeto de conexión \textbf{pymysql.connections.Connection} que será cerrado.
+\end{itemize}
+
+\subsection{Recolección de datos}\label{subsec:recolección-datos}
+\subsection{Almacenamiento de datos}\label{subsec:almacenamiento-datos}
+
+\section{Visualización Grafana}
+\subsection{Visualización de datos}
+¿Por quéé se han elegido estas gráficas?
+\subsection{Consultas a la base de datos}
+
+\section{Distribuciónde trabajo y organización}
+
+\section{Bibliografia}
 \end{document}
