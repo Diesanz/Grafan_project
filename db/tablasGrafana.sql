@@ -97,6 +97,7 @@ BEGIN
     INSERT INTO memoria (timestamp, ram, swap) VALUES (ts, mem_ram, mem_swap);
 
     DELETE FROM disco;
+
     INSERT INTO disco (timestamp, espacio) VALUES (ts, espacio_disco);
 
     INSERT INTO entradasalida (timestamp, operaciones) VALUES (ts, io_operaciones);
