@@ -6,6 +6,11 @@ DROP TABLE IF EXISTS entradasalida;
 DROP TABLE IF EXISTS num_procesos;
 DROP TABLE IF EXISTS procesos;
 DROP TABLE IF EXISTS red;
+DROP TABLE IF EXISTS hilos;
+DROP TABLE IF EXISTS interfaces;
+DROP TABLE IF EXISTS puertos_abiertos;
+-- DROP TABLE IF EXISTS temperatura;
+
 
 DROP PROCEDURE IF EXISTS AddDatos;
 
@@ -52,6 +57,7 @@ CREATE TABLE procesos (
     usuario VARCHAR(255) NOT NULL,
     nombre VARCHAR(255) NOT NULL,
     ruta VARCHAR(255) NOT NULL,
+    hilos INT NOT NULL,
     estado VARCHAR(255) NOT NULL -- tinyint(1) = booleano 
 );
 
@@ -62,7 +68,6 @@ CREATE TABLE red (
     conexiones_activas INT NOT NULL,
     PRIMARY KEY(timestamp)
 );
-
 
 DELIMITER //
 
@@ -90,8 +95,9 @@ BEGIN
     END;
 
     START TRANSACTION; -- Empezar una transacción
+    
+    DELETE FROM cpu;
 
-    DELETE FROM cpu; --Se pregunta por la carga y frecuencia instantane por eso no hace falta llevar un registro de todos los valores
     INSERT INTO cpu (timestamp, carga, frecuencia) VALUES (ts, carga_cpu, frecuencia_cpu);
 
     INSERT INTO memoria (timestamp, ram, swap) VALUES (ts, mem_ram, mem_swap);
@@ -101,7 +107,9 @@ BEGIN
     INSERT INTO disco (timestamp, espacio) VALUES (ts, espacio_disco);
 
     INSERT INTO entradasalida (timestamp, operaciones) VALUES (ts, io_operaciones);
-    
+   
+    DELETE FROM num_procesos;
+
     INSERT INTO num_procesos (timestamp, numero) VALUES (ts, num_proc);
 
     -- Insertar información de red

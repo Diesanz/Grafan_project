@@ -16,6 +16,7 @@ class DatosSistema():
         self.bytes_env = bytes_env
         self.bytes_rec = bytes_rec
         self.conexiones = conexiones
+
     
     def to_tuple(self):
         return (self.carga_cpu, self.frecuencia_cpu, self.mem_ram, self.mem_swap, 
@@ -24,4 +25,4 @@ class DatosSistema():
     
     def to_tuple_proc_info(self):
         return [(proc["pid"], proc["cpu_percent"], proc["memory_percent"], proc["vsz"], proc["rss"], 
-                proc["username"], proc["name"], proc["exe"], proc["status"]) for proc in self.proc_info] #devuelve una lista de tuplas
+                proc["username"], proc["name"], proc["exe"], proc["num_thread"], proc["status"]) for proc in self.proc_info] #devuelve una lista de tuplas

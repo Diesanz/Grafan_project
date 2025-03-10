@@ -13,13 +13,14 @@ def collect_data():
         {
             "pid": proc.info["pid"],
             "name": proc.info["name"],
-            "exe": proc.info["exe"] if proc.info["exe"] else f"[{proc.info["name"]}]",
+            "exe": proc.info["exe"] if proc.info["exe"] else "[{}]".format(proc.info["name"]),
             "status": proc.info["status"], 
             "username": proc.info["username"] if proc.info["username"] else "N/A",
             "cpu_percent": proc.info["cpu_percent"],
             "memory_percent": proc.info["memory_percent"],
             "vsz": proc.memory_info().vms,
-            "rss": proc.memory_info().rss
+            "rss": proc.memory_info().rss,
+            "num_thread": proc.num_threads()
         }
         for proc in psutil.process_iter(['pid', 'name', 'exe', 'status', 'username', 'cpu_percent', 'memory_percent'])
         #if proc.info["status"] == "running"
@@ -58,11 +59,11 @@ def insert_data(data: DatosSistema, conn):
             cursor.execute("DELETE FROM procesos;")
 
             # Primero insertamos los procesos (procesos_en_ejecucion)
-            cursor.executemany("""INSERT INTO procesos (pid, cpu_percent, memory_percent, vsz, rss, usuario, nombre, ruta, estado)
-                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""", data.to_tuple_proc_info()) #se realiza executemany para no hacer un bucle y ser más eficiente
+            cursor.executemany("""INSERT INTO procesos (pid, cpu_percent, memory_percent, vsz, rss, usuario, nombre, ruta, hilos, estado)
+                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", data.to_tuple_proc_info()) #se realiza executemany para no hacer un bucle y ser más eficiente
 
             # Luego, llamamos al procedimiento almacenado
-            cursor.callproc("AddDatos", data.to_tuple()) 
+            cursor.callproc("AddDatos", data.to_tuple())
 
             # Confirmamos la transacción
             conn.commit()
@@ -89,10 +90,9 @@ try:
             if data:
                 insert_data(data, conn)
 
-            time.sleep(10)  # Espera 10 segundos antes de la siguiente medición
+            time.sleep(5)  # Espera 10 segundos antes de la siguiente medición
 except Error as e:
     print(f"Error al conectar bas de datos: {e}")
 finally:
     if conn:  # Si la conexión fue establecida, cierra la conexión
         close_connection(conn)  # Cerrar la conexión al finalizar el programa
-
