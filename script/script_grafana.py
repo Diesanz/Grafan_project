@@ -14,7 +14,7 @@ def collect_data():
             "pid": proc.info["pid"],
             "name": proc.info["name"],
             "exe": proc.info["exe"] if proc.info["exe"] else "[{}]".format(proc.info["name"]),
-            "status": proc.info["status"], 
+            "status": proc.info["status"],
             "username": proc.info["username"] if proc.info["username"] else "N/A",
             "cpu_percent": proc.info["cpu_percent"],
             "memory_percent": proc.info["memory_percent"],
@@ -33,13 +33,15 @@ def collect_data():
         mem_swap=psutil.swap_memory().percent,
         espacio_disco=psutil.disk_usage('/').percent,
         io_operaciones=psutil.disk_io_counters().read_count,
-        
+
         proc_detail=proc_detail,  # Lista detallada de procesos
         num_proc=len(proc_detail),  # Número de procesos en ejecución
-        
+
         bytes_env=psutil.net_io_counters().bytes_sent,
         bytes_rec=psutil.net_io_counters().bytes_recv,
-        conexiones=len(psutil.net_connections(kind='inet'))
+        conexiones=len(psutil.net_connections(kind='inet')),
+        paq_env=psutil.net_io_counters().packets_sent,
+        paq_rec=psutil.net_io_counters().packets_recv
     )
 
     return data
@@ -78,7 +80,7 @@ def insert_data(data: DatosSistema, conn):
 conn = None
 
 try:
-    
+
     conn = get_connection()
 
     if conn:

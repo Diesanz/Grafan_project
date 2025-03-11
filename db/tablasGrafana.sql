@@ -58,7 +58,7 @@ CREATE TABLE procesos (
     nombre VARCHAR(255) NOT NULL,
     ruta VARCHAR(255) NOT NULL,
     hilos INT NOT NULL,
-    estado VARCHAR(255) NOT NULL -- tinyint(1) = booleano 
+    estado VARCHAR(255) NOT NULL -- tinyint(1) = booleano
 );
 
 CREATE TABLE red (
@@ -66,22 +66,26 @@ CREATE TABLE red (
     bytes_enviados INT NOT NULL,
     bytes_recibidos INT NOT NULL,
     conexiones_activas INT NOT NULL,
+    paquetes_enviados INT NOT NULL,
+    paquetes_recibidos INT NOT NULL,
     PRIMARY KEY(timestamp)
 );
 
 DELIMITER //
 
 CREATE PROCEDURE `AddDatos` (
-    IN `carga_cpu` FLOAT, 
-    IN `frecuencia_cpu` FLOAT, 
-    IN `mem_ram` FLOAT, 
+    IN `carga_cpu` FLOAT,
+    IN `frecuencia_cpu` FLOAT,
+    IN `mem_ram` FLOAT,
     IN `mem_swap` FLOAT,
     IN `espacio_disco` FLOAT,
     IN `io_operaciones` INT,
     IN `num_proc` INT,
     IN `bytes_env` INT,
     IN `bytes_rec` INT,
-    IN `conexiones` INT
+    IN `conexiones` INT,
+    IN `paq_env` INT,
+    IN `paq_rec` INT
 )
 BEGIN
     DECLARE ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
@@ -95,7 +99,7 @@ BEGIN
     END;
 
     START TRANSACTION; -- Empezar una transacción
-    
+
     DELETE FROM cpu;
 
     INSERT INTO cpu (timestamp, carga, frecuencia) VALUES (ts, carga_cpu, frecuencia_cpu);
@@ -107,13 +111,13 @@ BEGIN
     INSERT INTO disco (timestamp, espacio) VALUES (ts, espacio_disco);
 
     INSERT INTO entradasalida (timestamp, operaciones) VALUES (ts, io_operaciones);
-   
+
     DELETE FROM num_procesos;
 
     INSERT INTO num_procesos (timestamp, numero) VALUES (ts, num_proc);
 
     -- Insertar información de red
-    INSERT INTO red (timestamp, bytes_enviados, bytes_recibidos, conexiones_activas) VALUES (ts, bytes_env, bytes_rec, conexiones);
+    INSERT INTO red (timestamp, bytes_enviados, bytes_recibidos, conexiones_activas, paquetes_enviados, paquetes_recibidos) VALUES (ts, bytes_env, bytes_rec, conexiones, paq_env, paq_rec);
 
     COMMIT; -- Confirmar los cambios si todo va bien
 END //
