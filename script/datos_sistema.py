@@ -1,7 +1,7 @@
 class DatosSistema():
     def __init__(self, carga_cpu, frecuencia_cpu, mem_ram, mem_swap,
                  espacio_disco, io_operaciones, proc_detail, num_proc,
-                 bytes_env, bytes_rec, conexiones, paq_env, paq_rec):
+                 bytes_env, bytes_rec, conexiones, paq_env, paq_rec, dias, horas, minutos, segundos):
         self.carga_cpu = carga_cpu
         self.frecuencia_cpu = frecuencia_cpu
         self.mem_ram = mem_ram
@@ -18,11 +18,15 @@ class DatosSistema():
         self.paq_env = paq_env
         self.paq_rec = paq_rec
 
+        self.dias = dias
+        self.horas = horas
+        self.minutos = minutos
+        self.segundos = segundos
 
     def to_tuple(self):
         return (self.carga_cpu, self.frecuencia_cpu, self.mem_ram, self.mem_swap,
                 self.espacio_disco, self.io_operaciones, self.num_proc,
-                self.bytes_env, self.bytes_rec, self.conexiones, self.paq_env, self.paq_rec)
+                self.bytes_env, self.bytes_rec, self.conexiones, self.paq_env, self.paq_rec, self.dias, self.horas, self.minutos, self.segundos)
 
     def to_tuple_proc_info(self):
         return [(proc["pid"], proc["cpu_percent"], proc["memory_percent"], proc["vsz"], proc["rss"],
