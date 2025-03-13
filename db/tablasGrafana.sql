@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS red;
 DROP TABLE IF EXISTS hilos;
 DROP TABLE IF EXISTS interfaces;
 DROP TABLE IF EXISTS puertos_abiertos;
+DROP TABLE IF EXISTS tiempo_activo;
 -- DROP TABLE IF EXISTS temperatura;
 
 
@@ -71,6 +72,15 @@ CREATE TABLE red (
     PRIMARY KEY(timestamp)
 );
 
+CREATE TABLE tiempo_activo (
+        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        dias INT NOT NULL,
+        horas INT NOT NULL,
+        minutos INT NOT NULL,
+        segundos INT NOT NULL,
+        PRIMARY KEY(dias, horas, minutos, segundos)
+);
+
 DELIMITER //
 
 CREATE PROCEDURE `AddDatos` (
@@ -85,7 +95,11 @@ CREATE PROCEDURE `AddDatos` (
     IN `bytes_rec` INT,
     IN `conexiones` INT,
     IN `paq_env` INT,
-    IN `paq_rec` INT
+    IN `paq_rec` INT,
+    IN `d` INT,
+    IN `h` INT,
+    IN `m` INT,
+    IN `s` INT
 )
 BEGIN
     DECLARE ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
@@ -118,6 +132,8 @@ BEGIN
 
     -- Insertar información de red
     INSERT INTO red (timestamp, bytes_enviados, bytes_recibidos, conexiones_activas, paquetes_enviados, paquetes_recibidos) VALUES (ts, bytes_env, bytes_rec, conexiones, paq_env, paq_rec);
+
+    INSERT INTO tiempo_activo(timestamp, dias, horas, minutos, segundos) VALUES (ts, d, h, m, s);
 
     COMMIT; -- Confirmar los cambios si todo va bien
 END //
