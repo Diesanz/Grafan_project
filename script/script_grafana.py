@@ -27,7 +27,7 @@ def collect_data():
     ]
     
     #Obtener el tiempo que el servidor ha estado activo
-    boot_time = psutil.boot_time()
+    boot_time = psutil.boot_time() #tiempo de arranque, momento en el que arrancó el servidor
     current_time = time.time()
     time_seconds = current_time - boot_time
 
