@@ -25,7 +25,17 @@ def collect_data():
         for proc in psutil.process_iter(['pid', 'name', 'exe', 'status', 'username', 'cpu_percent', 'memory_percent'])
         #if proc.info["status"] == "running"
     ]
+    
+    #Obtener el tiempo que el servidor ha estado activo
+    boot_time = psutil.boot_time()
+    current_time = time.time()
+    time_seconds = current_time - boot_time
 
+    time_days = time_seconds // 86400
+    time_hours = (time_seconds % 86400) // 3600
+    time_minutes = (time_seconds % 3600) // 60
+    time_seconds = time_seconds % 60
+    
     data = DatosSistema(
         carga_cpu=psutil.cpu_percent(interval=1),
         frecuencia_cpu=psutil.cpu_freq().current,
@@ -41,7 +51,12 @@ def collect_data():
         bytes_rec=psutil.net_io_counters().bytes_recv,
         conexiones=len(psutil.net_connections(kind='inet')),
         paq_env=psutil.net_io_counters().packets_sent,
-        paq_rec=psutil.net_io_counters().packets_recv
+        paq_rec=psutil.net_io_counters().packets_recv,
+
+        dias=time_days,
+        horas=time_hours,
+        minutos=time_minutes,
+        segundos=time_seconds
     )
 
     return data
