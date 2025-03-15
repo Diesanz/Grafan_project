@@ -203,7 +203,9 @@ finally:
     if conn:  # Si la conexión fue establecida, cierra la conexión
         close_connection(conn)  # Cerrar la conexión al finalizar el programa
 \end{minted}
-\textit{Explicación}:
+
+Explicación:
+
 \begin{itemize}
     \item \textbf{Establecimiento de conexión}: Se establece la conexión con la base de datos mediante el método \textbf{get-connection()}, que se explica más adelante en la sección \autoref{subsec:conexión-db}.
     \item \textbf{Comprobación de conexión}: Se verifica si la conexión fue exitosa.
@@ -219,15 +221,64 @@ finally:
 
 \subsection{Recolección de datos}\label{subsec:recolección-datos}
 
+Para la recolección de datos se ha utilizado una librería de Python llamada \textbf{psutil}, que se encarga de obtener información de los procesos y utilización del sistema como puede ser la cpu, memoria, discos, redes o sensores y que funciona tanto en Windows, MacOS o Linux.
+
+A continuación se hará un listado de las métricas recogidas con la librería psutil:
+
+\begin{enumerate}
+    \item Carga instantánea de CPU $ \rightarrow $ \lstinline{psutil.cpu_percent(interval=1)}
+    \item Frecuencia intantánea de CPU $ \rightarrow $ \lstinline{psutil.cpu_freq().current}
+    \item Uso de memoria RAM y memoria SWAP $ \rightarrow $ \lstinline{psutil.virtual_memory().percent} y \lstinline{swap_memory().percent}
+    \item Espacio en disco $ \rightarrow $ \lstinline{psutil.disk_usage('/').percent}
+    \item Operaciones de E/S $ \rightarrow $ \lstinline{psutil.disk_io_counters().read_count}
+    \item Número de bytes enviados y recibidos  $ \rightarrow $ \lstinline{psutil.net_io_counters().bytes_sent} y \lstinline{psutil.net_io_counters().bytes_recv}
+    \item Número de conexiones de red activas si las hubiera  $ \rightarrow $ \lstinline{len(psutil.net_connections(kind='inet'))}
+    \item Información detallada de los procesos en ejecución  $ \rightarrow $ para ello se creó una clase que recopilaba todos los detalles de los procesos:
+    \begin{minted}{python}
+        proc_detail = [
+        {
+            "pid": proc.info["pid"],
+            "name": proc.info["name"],
+            "exe": proc.info["exe"] 
+                if proc.info["exe"] 
+                else [{}]".format(proc.info["name"]),
+            "status": proc.info["status"],
+            "username": proc.info["username"] 
+                if proc.info["username"] 
+                else "N/A",
+            "cpu_percent": proc.info["cpu_percent"],
+            "memory_percent": proc.info["memory_percent"],
+            "vsz": proc.memory_info().vms,
+            "rss": proc.memory_info().rss,
+            "num_thread": proc.num_threads()
+        }
+        for proc in psutil.process_iter(['pid', 'name', 'exe',
+        'status', 'username', 'cpu_percent', 'memory_percent'])
+        #if proc.info["status"] == "running"
+    ]
+    \end{minted}
+    \item Momento en el que se arrancó el servidor $ \rightarrow $ \lstinline{psutil.boot_time()}
+\end{enumerate}
+
 \subsection{Almacenamiento de datos}\label{subsec:almacenamiento-datos}
 
 \section{Visualización Grafana}
 
-\subsection{Visualización de datos}
+\subsection{Carga CPU}
 
-¿Por qué se han elegido estas gráficas?
+La carga instantánea de CPU se muestra en el panel de Grafana bajo la visualización llamada ''Gauge'' ya que es el tipo de visualización que mejor muestra este valor.\\
 
-\subsection{Consultas a la base de datos}
+Está configurado para que muestre el valor exacto de la carga y una semicircunferencia que se completa en base a dicho valor. La visualización puede cambiar de color según el porcentaje de la carga de CPU, verde representa del 0\% al 60\%, amarillo del 60\% al 90\%, y rojo del 90\% al 100\%.\\
+
+La consulta realizada a la base de datos es \lstinline{SELECT carga FROM grafana.cpu;}
+
+\subsection{Frecuencia CPU}
+
+La frecuencia instantánea de CPU se muestra en el panel de Grafana bajo la visualización llamada ''Gauge'' ya que es el tipo de visualización que mejor muestra este valor.\\
+
+Está configurado para que muestre el valor exacto de la frecuencia y una semicircunferencia que va desde el valor de 0 hasta 4000. Se ha supuesto el valor de 4000 como frecuencia máxima de la CPU debido a que la media suele ser 2000 y la máquina virtual no mostraba cuál podría ser este valor máximo. La visualización puede cambiar de color según el porcentaje de la carga de CPU, verde representa del 0\% al 80\%, amarillo del 80\% al 90\%, y rojo del 90\% al 100\% del valor máximo de la frecuencia de CPU (en nuestro caso 4000).\\
+
+La consulta realizada a la base de datos es \lstinline{SELECT frecuencia FROM grafana.cpu;}
 
 \section{Distribuciónde trabajo y organización}
 
