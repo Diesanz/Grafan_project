@@ -7,7 +7,27 @@ from conexion_sql import get_connection, close_connection
 from datos_sistema import DatosSistema
 
 def collect_data():
-    """Recolecta los datos del sistema y los almacena en un objeto DatosSistema"""
+    """
+    Recolecta los datos del sistema y los almacena en un objeto DatosSistema.
+    
+    parameters: No recibe parámetros.
+    
+    return: Devuelve un objeto `DatosSistema` con los siguientes atributos:
+        - carga_cpu: porcentaje de carga de la CPU.
+        - frecuencia_cpu: frecuencia actual de la CPU.
+        - mem_ram: porcentaje de uso de la memoria RAM.
+        - mem_swap: porcentaje de uso de la memoria swap.
+        - espacio_disco: porcentaje de uso del disco.
+        - io_operaciones: número de operaciones de lectura en disco.
+        - proc_detail: lista con detalles de los procesos en ejecución.
+        - num_proc: número total de procesos en ejecución.
+        - bytes_env: cantidad de bytes enviados por la red.
+        - bytes_rec: cantidad de bytes recibidos por la red.
+        - conexiones: número de conexiones de red activas.
+        - paq_env: número de paquetes enviados.
+        - paq_rec: número de paquetes recibidos.
+        - dias, horas, minutos, segundos: tiempo desde el arranque del sistema.
+    """
     # Obtener detalles de los procesos
     proc_detail = [
         {
@@ -23,19 +43,20 @@ def collect_data():
             "num_thread": proc.num_threads()
         }
         for proc in psutil.process_iter(['pid', 'name', 'exe', 'status', 'username', 'cpu_percent', 'memory_percent'])
-        #if proc.info["status"] == "running"
     ]
     
-    #Obtener el tiempo que el servidor ha estado activo
-    boot_time = psutil.boot_time() #tiempo de arranque, momento en el que arrancó el servidor
+    # Obtener el tiempo que el servidor ha estado activo
+    boot_time = psutil.boot_time()  # Tiempo de arranque, momento en el que arrancó el servidor
     current_time = time.time()
     time_seconds = current_time - boot_time
 
+    # Calcular el tiempo en días, horas, minutos y segundos
     time_days = time_seconds // 86400
     time_hours = (time_seconds % 86400) // 3600
     time_minutes = (time_seconds % 3600) // 60
     time_seconds = time_seconds % 60
     
+    # Crear el objeto DatosSistema con los datos recolectados
     data = DatosSistema(
         carga_cpu=psutil.cpu_percent(interval=1),
         frecuencia_cpu=psutil.cpu_freq().current,
@@ -43,28 +64,31 @@ def collect_data():
         mem_swap=psutil.swap_memory().percent,
         espacio_disco=psutil.disk_usage('/').percent,
         io_operaciones=psutil.disk_io_counters().read_count,
-
         proc_detail=proc_detail,  # Lista detallada de procesos
         num_proc=len(proc_detail),  # Número de procesos en ejecución
-
         bytes_env=psutil.net_io_counters().bytes_sent,
         bytes_rec=psutil.net_io_counters().bytes_recv,
         conexiones=len(psutil.net_connections(kind='inet')),
         paq_env=psutil.net_io_counters().packets_sent,
         paq_rec=psutil.net_io_counters().packets_recv,
-
         dias=time_days,
         horas=time_hours,
         minutos=time_minutes,
         segundos=time_seconds
     )
 
-    return data
-
-
+    return data  # Devuelve el objeto `DatosSistema` con todos los datos del sistema
 
 def insert_data(data: DatosSistema, conn):
-    """Inserta los datos en la base de datos usando el procedimiento almacenado"""
+    """
+    Inserta los datos recolectados en la base de datos utilizando un procedimiento almacenado.
+    
+    parameters:
+    - `data`: Un objeto `DatosSistema` que contiene los datos recolectados del sistema.
+    - `conn`: Conexión a la base de datos MySQL.
+    
+    return: No devuelve nada. Inserta los datos en la base de datos.
+    """
     if conn:
         try:
             cursor = conn.cursor()
@@ -72,44 +96,44 @@ def insert_data(data: DatosSistema, conn):
             # Inicia una transacción
             conn.begin()
 
-            #eliminar procesos anteriores
+            # Eliminar procesos anteriores
             cursor.execute("DELETE FROM procesos;")
 
-            # Primero insertamos los procesos (procesos_en_ejecucion)
+            # Insertar los detalles de los procesos
+            #Esto se realiza devido a que hay que insertar varios procesos en la tabla 
             cursor.executemany("""INSERT INTO procesos (pid, cpu_percent, memory_percent, vsz, rss, usuario, nombre, ruta, hilos, estado)
-                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", data.to_tuple_proc_info()) #se realiza executemany para no hacer un bucle y ser más eficiente
+                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", data.to_tuple_proc_info())  # `data.to_tuple_proc_info()` devuelve los detalles de los procesos
 
-            # Luego, llamamos al procedimiento almacenado
-            cursor.callproc("AddDatos", data.to_tuple())
+            # Llamar al procedimiento almacenado para insertar los otros datos del sistema
+            cursor.callproc("AddDatos", data.to_tuple())  # `data.to_tuple()` devuelve los otros datos en formato adecuado para el procedimiento
 
-            # Confirmamos la transacción
+            # Confirmar la transacción
             conn.commit()
 
             cursor.close()
             print("Datos insertados correctamente en la BD.")
         except Error as e:
-            conn.rollback()  # Si algo falla, revertimos la transacción
+            conn.rollback()  # Si ocurre un error, revertir la transacción
             print(f"Error al insertar datos: {e}")
 
-
+# Configuración de conexión a la base de datos
 conn = None
 
 try:
-
-    conn = get_connection()
+    conn = get_connection()  # Obtener la conexión a la base de datos
 
     if conn:
         print("Conexión a la base de datos establecida correctamente")
 
-        """Ejecuta la recolección de datos e inserción en la BD en intervalos regulares"""
+        # Ejecuta la recolección e inserción de datos en intervalos regulares
         while True:
-            data = collect_data()
+            data = collect_data()  # Llama a la función collect_data para recolectar los datos
             if data:
-                insert_data(data, conn)
+                insert_data(data, conn)  # Llama a la función insert_data para insertar los datos en la base de datos
 
-            time.sleep(5)  # Espera 10 segundos antes de la siguiente medición
+            time.sleep(5)  # Espera 5 segundos antes de la siguiente medición
 except Error as e:
-    print(f"Error al conectar bas de datos: {e}")
+    print("Error al conectar con la base de datos:" + str(e))
 finally:
-    if conn:  # Si la conexión fue establecida, cierra la conexión
-        close_connection(conn)  # Cerrar la conexión al finalizar el programa
+    if conn:  # Si la conexión fue exitosa, se cierra
+        close_connection(conn)  # Cierra la conexión al finalizar el programa

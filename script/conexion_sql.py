@@ -4,30 +4,33 @@ import pymysql
 
 def get_connection():
     try:
-        # Obtén los secretos desde variables de entorno
-        host = "localhost"
-        port = int(3306)
-        database = "grafana"
-        user = "grafanaReader"
-        password = "password"
-
-        # Conéctate a MariaDB
+        """
+        Establece una conexión con la base de datos MariaDB utilizando los parámetros proporcionados.
+                
+        return: Devuelve un objeto de tipo conexión a la base de datos si la conexión es exitosa.
+                Si ocurre un error, devuelve None.
+        """
         connection = pymysql.connect(
-            host=host,
-            port=port,
-            database=database,
-            user=user,
-            password=password,
+            host= "localhost",
+            port= int(3306),
+            database= "grafana",
+            user= "grafanaReader",
+            password= "Grupo6esi",
             charset='utf8mb4',  # Evita problemas de encoding
             cursorclass=pymysql.cursors.DictCursor
         )
-       # print("✅ Conexión a la base de datos establecida correctamente")
         return connection
     except pymysql.MySQLError as e:
-        print(f"❌ Error al conectarse a la base de datos: {e}")
+        print("Error al conectarse a la base de datos:" + str(e))
         return None
 
 def close_connection(connection):
-    if connection:
+    """
+    Cierra conexión con la base de datos
+
+    parameters: 
+        -connection: objetito de tipo conexión a base de datos la cual se quiere cerrar
+    """
+    if connection: 
+        #si la conexión es válida se cierra conexión
         connection.close()
-       # print("🔒 Conexión cerrada correctamente")
