@@ -1,5 +1,5 @@
 \documentclass{article}
-\usepackage{graphicx} % Required for inserting images
+\usepackage{graphicx}
 \usepackage[spanish]{babel}
 \usepackage{float}
 \usepackage{minted}
@@ -278,9 +278,9 @@ A continuación se hará un listado de las métricas recogidas con la librería 
 
 \subsection{Carga de CPU}
 
-La carga instantánea de la CPU se muestra en el panel de Grafana bajo la visualización llamada ``Gauge'', ya que es el tipo de visualización que mejor representa este valor en forma de medidor. Esta representación es adecuada porque permite ver de manera intuitiva el nivel de carga en tiempo real, con colores que indican el estado del sistema.\
+La carga instantánea de la CPU se muestra en el panel de Grafana bajo la visualización llamada ``Gauge'', ya que es el tipo de visualización que mejor representa este valor en forma de medidor. Esta representación es adecuada porque permite ver de manera intuitiva el nivel de carga en tiempo real, con colores que indican el estado del sistema.\\
 
-Está configurado para mostrar el valor exacto de la carga y una semicircunferencia que se completa en función de dicho valor. La visualización cambia de color según el porcentaje de carga de la CPU: verde representa del 0\% al 60\%, amarillo del 60\% al 90\%, y rojo del 90\% al 100\%.\
+Está configurado para mostrar el valor exacto de la carga y una semicircunferencia que se completa en función de dicho valor. La visualización cambia de color según el porcentaje de carga de la CPU: verde representa del 0\% al 60\%, amarillo del 60\% al 90\%, y rojo del 90\% al 100\%.\\
 
 La consulta realizada a la base de datos obtiene el valor de la carga actual de la CPU:
 
@@ -288,21 +288,20 @@ La consulta realizada a la base de datos obtiene el valor de la carga actual de 
 SELECT carga FROM grafana.cpu;
 \end{lstlisting}
 
-Esta consulta selecciona el campo `carga` de la tabla `cpu` en la base de datos de Grafana, lo que nos permite obtener el uso actual del procesador en un momento determinado.\
+Esta consulta selecciona el campo `carga` de la tabla `cpu` en la base de datos de Grafana, lo que nos permite obtener el uso actual del procesador en un momento determinado.
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.3\linewidth]{cargaCPU.png}
     \caption{Carga de CPU}
     \label{fig:carga-cpu}
 \end{figure}
-\newpage
 
 \subsection{Frecuencia de CPU}
 
-La frecuencia instantánea de la CPU se muestra en el panel de Grafana bajo la visualización ``Gauge''. Esta visualización ha sido elegida porque representa de forma clara la frecuencia de operación del procesador en MHz, permitiendo comparar su estado actual con un valor máximo predefinido.\
+La frecuencia instantánea de la CPU se muestra en el panel de Grafana bajo la visualización ``Gauge''. Esta visualización ha sido elegida porque representa de forma clara la frecuencia de operación del procesador en MHz, permitiendo comparar su estado actual con un valor máximo predefinido.\\
 
-Está configurado para mostrar el valor exacto de la frecuencia y una semicircunferencia que va desde 0 hasta 4000 MHz. Se ha supuesto 4000 MHz como frecuencia máxima de la CPU debido a que la media suele ser 2000 MHz y la máquina virtual no proporcionaba un valor máximo. La visualización cambia de color según el porcentaje de la frecuencia de la CPU: verde del 0\% al 80\%, amarillo del 80\% al 90\%, y rojo del 90\% al 100\% del valor máximo de frecuencia (4000 MHz).\
+Está configurado para mostrar el valor exacto de la frecuencia y una semicircunferencia que va desde 0 hasta 4000 MHz. Se ha supuesto 4000 MHz como frecuencia máxima de la CPU debido a que la media suele ser 2000 MHz y la máquina virtual no proporcionaba un valor máximo. La visualización cambia de color según el porcentaje de la frecuencia de la CPU: verde del 0\% al 80\%, amarillo del 80\% al 90\%, y rojo del 90\% al 100\% del valor máximo de frecuencia (4000 MHz).\\
 
 La consulta utilizada es la siguiente:
 
@@ -310,9 +309,9 @@ La consulta utilizada es la siguiente:
 SELECT frecuencia FROM grafana.cpu;
 \end{lstlisting}
 
-Esta consulta selecciona el campo `frecuencia` de la tabla `cpu`, obteniendo la frecuencia actual del procesador. Esto permite a los administradores verificar si la CPU está funcionando dentro de los rangos esperados o si está alcanzando valores críticos.\
+Esta consulta selecciona el campo `frecuencia` de la tabla `cpu`, obteniendo la frecuencia actual del procesador. Esto permite a los administradores verificar si la CPU está funcionando dentro de los rangos esperados o si está alcanzando valores críticos.
 
-\begin{figure}[h!]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.3\linewidth]{frecuenciaCPU.png}
     \caption{Frecuencia de CPU}
@@ -321,7 +320,7 @@ Esta consulta selecciona el campo `frecuencia` de la tabla `cpu`, obteniendo la 
 
 \subsection{Uso de memoria RAM y memoria SWAP}
 
-El uso de memoria RAM y SWAP se muestra en el panel de Grafana bajo una visualización ``Time Series'', ya que permite observar la evolución del uso de ambas a lo largo del tiempo. Este tipo de visualización permite identificar tendencias y detectar posibles picos de uso que podrían afectar el rendimiento del sistema. Además se muestran tanto los valores mínimos y máximos que se han alcanzando en ambos usos de memoria.\
+El uso de memoria RAM y SWAP se muestra en el panel de Grafana bajo una visualización ``Time Series'', ya que permite observar la evolución del uso de ambas a lo largo del tiempo. Este tipo de visualización permite identificar tendencias y detectar posibles picos de uso que podrían afectar el rendimiento del sistema. Además se muestran tanto los valores mínimos y máximos que se han alcanzando en ambos usos de memoria.\\
 
 La consulta SQL utilizada para obtener estos valores es:
 
@@ -331,9 +330,9 @@ WHERE timestamp >= now() - interval 5 minute
 ORDER BY timestamp ASC;
 \end{lstlisting}
 
-Aquí se seleccionan los valores de `ram` y `swap`, junto con la marca de tiempo `timestamp`, filtrando solo los datos de los últimos cinco minutos y ordenándolos cronológicamente. Esto permite visualizar cómo ha cambiado el uso de la memoria en ese período de tiempo.\
+Aquí se seleccionan los valores de `ram` y `swap`, junto con la marca de tiempo `timestamp`, filtrando solo los datos de los últimos cinco minutos y ordenándolos cronológicamente. Esto permite visualizar cómo ha cambiado el uso de la memoria en ese período de tiempo.
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{memoria.png}
     \caption{Uso de memoria RAM y Swap}
@@ -342,9 +341,9 @@ Aquí se seleccionan los valores de `ram` y `swap`, junto con la marca de tiempo
 
 \subsection{Espacio en disco}
 
-El espacio en disco se muestra en el panel de Grafana bajo una visualización ``Pie Chart'', que permite visualizar el porcentaje de disco utilizado y el espacio libre en tiempo real. Este tipo de gráfico es elegido ya que permite ver de forma clara la proporción de almacenamiento consumido frente al disponible.\
+El espacio en disco se muestra en el panel de Grafana bajo una visualización ``Pie Chart'', que permite visualizar el porcentaje de disco utilizado y el espacio libre en tiempo real. Este tipo de gráfico es elegido ya que permite ver de forma clara la proporción de almacenamiento consumido frente al disponible.\\
 
-El gráfico está configurado para mostrar en verde el espacio utilizado y en amarillo el espacio libre. Además, en la gráfica se incluyen los porcentajes exactos con números.\
+El gráfico está configurado para mostrar en verde el espacio utilizado y en amarillo el espacio libre. Además, en la gráfica se incluyen los porcentajes exactos con números.\\
 
 La consulta SQL utilizada es:
 
@@ -352,18 +351,20 @@ La consulta SQL utilizada es:
 SELECT espacio as "Usado", 100 - espacio as "Libre" FROM grafana.disco;
 \end{lstlisting}
 
-Esta consulta calcula dinámicamente el espacio libre restando el valor `espacio` (usado) de 100, proporcionando así un desglose claro del almacenamiento.\
+Esta consulta calcula dinámicamente el espacio libre restando el valor `espacio` (usado) de 100, proporcionando así un desglose claro del almacenamiento.
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.5\linewidth]{disco.png}
     \caption{Espacio en Disco}
     \label{fig:enter-label}
 \end{figure}
-\newpage
+
 \subsection{Operaciones de E/S}
 
-Las operaciones de entrada y salida (E/S) se muestran en el panel de Grafana con una visualización ``Time Series'' en formato de gráfico de barras. Esta elección permite ver la cantidad de operaciones de lectura y escritura en diferentes momentos del tiempo, facilitando la identificación de posibles cuellos de botella en el sistema de almacenamiento.\
+Las operaciones de entrada y salida (E/S) se muestran en el panel de Grafana con una visualización ``Time Series'' en formato de gráfico de barras. Esta elección permite ver la cantidad de operaciones de lectura y escritura en diferentes momentos del tiempo, facilitando la identificación de posibles cuellos de botella en el sistema de almacenamiento.\\
+
+La consulta SQL utilizada es:
 
 \begin{lstlisting}[language=SQL]
 SELECT * FROM grafana.entradasalida 
@@ -371,9 +372,9 @@ WHERE timestamp >= now() - interval 5 minute
 ORDER BY timestamp ASC;
 \end{lstlisting}
 
-Esta consulta recupera todas las columnas de la tabla `entradasalida` para los últimos cinco minutos, lo que permite analizar la actividad reciente del disco.\
+Esta consulta recupera todas las columnas de la tabla `entradasalida` para los últimos cinco minutos, lo que permite analizar la actividad reciente del disco.
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{operaciones.png}
     \caption{Operaciones de E/S}
@@ -382,7 +383,9 @@ Esta consulta recupera todas las columnas de la tabla `entradasalida` para los �
 
 \subsection{Bytes enviados y recibidos}
 
-Los bytes enviados y recibidos se muestran en Grafana en paneles de tipo ``Time Series'' con un gráfico de líneas. Esta representación facilita el seguimiento del tráfico de red a lo largo del tiempo. Además se muestran los últimos bytes tanto enviados como recibidos y la suma total de todos.\
+Los bytes enviados y recibidos se muestran en Grafana en paneles de tipo ``Time Series'' con un gráfico de líneas. Esta representación facilita el seguimiento del tráfico de red a lo largo del tiempo. Además se muestran los últimos bytes tanto enviados como recibidos y la suma total de todos.\\
+
+Las consultas SQL utilizadas son:
 
 \begin{lstlisting}[language=SQL]
 SELECT bytes_enviados, timestamp FROM grafana.red
@@ -394,33 +397,35 @@ WHERE timestamp >= now() - interval 5 minute
 ORDER BY timestamp ASC;
 \end{lstlisting}
 
-Estas consultas seleccionan los bytes enviados y recibidos en los últimos cinco minutos, permitiendo detectar patrones de uso y posibles congestiones en la red.\
+Estas consultas seleccionan los bytes enviados y recibidos en los últimos cinco minutos, permitiendo detectar patrones de uso y posibles congestiones en la red.
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{bytes_enviados.png}
     \caption{Bytes enviados}
     \label{fig:enter-label}
 \end{figure}
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{bytes_recibidos.png}
     \caption{Bytes recibidos}
     \label{fig:enter-label}
 \end{figure}
-\newpage
+
 \subsection{Conexiones de red activas}
 
-Las conexiones de red activas se muestran en Grafana en un panel de tipo ``Stat'', el cual permite visualizar las conexiones activas en un instante dado. También permite observar picos en los que hubo mayor número de conexiones de red. A medida que aumenta la cantidad de conexiones, las tonalidades de color varían.\
+Las conexiones de red activas se muestran en Grafana en un panel de tipo ``Stat'', el cual permite visualizar las conexiones activas en un instante dado. También permite observar picos en los que hubo mayor número de conexiones de red. A medida que aumenta la cantidad de conexiones, las tonalidades de color varían.\\
+
+La consulta SQL utilizada es:
 
 \begin{lstlisting}[language=SQL]
 SELECT conexiones_activas as "Conexiones Activas" FROM grafana.red;
 \end{lstlisting}
 
-Esta consulta obtiene el número de conexiones activas en tiempo real, lo que facilita la supervisión del tráfico en la red.\
+Esta consulta obtiene el número de conexiones activas en tiempo real, lo que facilita la supervisión del tráfico en la red.
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.6\linewidth]{conexiones_activas.png}
     \caption{Conexiones de red Activas}
@@ -429,32 +434,38 @@ Esta consulta obtiene el número de conexiones activas en tiempo real, lo que fa
 
 \subsection{Número de procesos en ejecución}
 
-El número de procesos en ejecución se muestra en Grafana en un panel de tipo ``Stat'', que permite visualizar la cantidad de procesos activos en un instante dado.\
+El número de procesos en ejecución se muestra en Grafana en un panel de tipo ``Stat'', que permite visualizar la cantidad de procesos activos en un instante dado.\\
+
+La consulta SQL utilizada es:
 
 \begin{lstlisting}[language=SQL]
 SELECT numero, timestamp FROM grafana.num_procesos;
 \end{lstlisting}
 
-Esta consulta proporciona el número actual de procesos, útil para detectar posibles sobrecargas en el sistema.\
+Esta consulta proporciona el número actual de procesos, útil para detectar posibles sobrecargas en el sistema.
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.3\linewidth]{procesos_ejecc.png}
     \caption{Procesos en ejecución}
     \label{fig:enter-label}
 \end{figure}
-\newpage
+
 \subsection{Lista detallada de los procesos en ejecución}
 
-La lista de procesos en ejecución se muestra en Grafana en una tabla, lo que permite acceder, visualizar y filtrar todos los procesos en tiempo real junto con sus detalles.\
+La lista de procesos en ejecución se muestra en Grafana en una tabla, lo que permite acceder, visualizar y filtrar todos los procesos en tiempo real junto con sus detalles.\\
+
+La consulta SQL utilizada es:
 
 \begin{lstlisting}[language=SQL]
-SELECT usuario as Usuario, pid as PID, 
-cpu_percent as CPU, memory_percent as MEM, vsz as VSZ, rss as RSS, estado as Stat, 
-nombre as Nombre, ruta as Comando, hilos as hilos FROM 
-grafana.procesos;
+SELECT usuario as Usuario, pid as PID, cpu_percent as CPU,
+memory_percent as MEM, vsz as VSZ, rss as RSS, estado as Stat,
+nombre as Nombre, ruta as Comando, hilos as hilos 
+FROM grafana.procesos;
 \end{lstlisting}
+
 Esta consulta obtiene una lista detallada de los procesos en ejecución en el sistema como lo haria el comando \textbf{ps aux} de Linux:
+
 \begin{itemize}
     \item \textbf{usuario}: Indica el usuario que ha iniciado el proceso.
     \item \textbf{pid}: Identificador único del proceso.
@@ -467,15 +478,105 @@ Esta consulta obtiene una lista detallada de los procesos en ejecución en el si
     \item \textbf{ruta}: Ruta de ejecución del proceso o nombre del comando (en este caso coincidirá con el nombre del proceso).
     \item \textbf{hilos}: Número de hilos asociados al proceso.
 \end{itemize}
+
 Esta información es útil para el monitoreo del sistema, ya que permite detectar procesos que consumen muchos recursos y podrían estar afectando el rendimiento del sistema.
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
-    \includegraphics[width=1.3\linewidth]{procesos.png}
+    \includegraphics[width=1.0\linewidth]{procesos.png}
     \caption{Detalles de los procesos en ejecución}
     \label{fig:enter-label}
 \end{figure}
-\newpage
+
+\subsection{Número de hilos totales}
+
+El número de hilos totales de los procesos se muestra en Grafana en un panel de tipo ''Stat'', que permite visualizar el número de manera clara.\\
+
+La consulta SQL utilizada es:
+
+\begin{lstlisting}[language=SQL]
+    SELECT sum(hilos) FROM grafana.procesos
+\end{lstlisting}
+
+Esta consulta consigue la suma de todos los hilos que utilizan cada proceso que se encuentra en ejecución.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\linewidth]{hilos_totales.png}
+    \caption{Número de hilos totales}
+    \label{fig:enter-label}
+\end{figure}
+
+\subsection{Estado de los procesos}
+
+El estado de los procesos es mostrado en Grafana en un panel de tipo ''Pie chart'', que representa una circunferencia dividida en secciones según el porcentaje de uso de cada sección.\\
+
+Este panel está dividido en tres partes donde se muestra el porcentaje exacto en cada momento:
+
+\begin{itemize}
+    \item Idle (inactivo) $ \rightarrow $ se refiere a los procesos que no están haciendo nada activamente, pero tampoco están bloqueados o esperando algo específico. Se representa en color azul.
+    \item Running (ejecutándose) $ \rightarrow $ se refiere a los procesos que están en ejecución en la CPU o listos para ejecutarse. Se representa en color amarillo.
+    \item Sleeping (durmiendo) $ \rightarrow $ se refiere a los procesos que se encuentran esperando un evento o recurso antes de continuar con su ejecución. Se representa en color rosa.
+\end{itemize}
+
+La consulta SQL utilizada es:
+
+\begin{lstlisting}[language=SQL]
+    SELECT 
+        COUNT(CASE WHEN estado = 'Idle' THEN 1 END) AS Idle,
+        COUNT(CASE WHEN estado = 'Running' THEN 1 END) AS Running,
+        COUNT(CASE WHEN estado = 'Sleeping' THEN 1 END) AS Sleeping
+    FROM grafana.procesos;
+\end{lstlisting}
+
+Esta consulta cuenta las veces que se repite cada estado de cada proceso. Por ejemplo, si el estado es 'Idle' devuelve un 1, sino es NULL.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{estado_procesos.png}
+    \caption{Estado de los procesos}
+    \label{fig:enter-label}
+\end{figure}
+
+\subsection{Número de paquetes enviados/recibidos}
+
+El número de paquetes enviados y recibidos se muestra en Grafana en un panel de tipo ''Gauge'', que muestra tanto el número inmediato como una semicircunferencia comparando las dos medidas capturadas.\\
+
+La consulta SQL utilizada es:
+
+\begin{lstlisting}[language=SQL]
+    SELECT paquetes_enviados as Enviados, 
+    paquetes_recibidos as Recibidos FROM grafana.red
+\end{lstlisting}
+
+Esta consulta muestra el número de paquetes enviados y recibidos que se almacena en la tabla de la red.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{paquetes_enviados_recibidos.png}
+    \caption{Paquetes enviados y recibidos}
+    \label{fig:enter-label}
+\end{figure}
+
+\subsection{Tiempo activo}
+
+El tiempo activo del servidor se muestra en Grafana en un panel de tipo ''Table'', en donde se puede ver que esta distribuido en días, horas, minutos y segundos.\\
+
+La consulta SQL que se ha utilizado es:
+
+\begin{lstlisting}[language=SQL]
+    SELECT dias, horas, minutos, segundos 
+    FROM grafana.tiempo_activo ORDER BY timestamp DESC LIMIT 1
+\end{lstlisting}
+
+Esta consulta muestra el último número de días, horas, minutos y segundos almacenados en la tabla de tiempo\_activo.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{tiempo_activo.png}
+    \caption{Tiempo activo}
+    \label{fig:enter-label}
+\end{figure}
 
 \section{Distribuciónde trabajo y organización}
 
