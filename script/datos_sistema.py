@@ -1,7 +1,7 @@
 class DatosSistema:
     def __init__(self, carga_cpu, frecuencia_cpu, mem_ram, mem_swap,
                  espacio_disco, io_operaciones, proc_detail, num_proc,
-                 bytes_env, bytes_rec, conexiones, paq_env, paq_rec, dias, horas, minutos, segundos):
+                 bytes_env, bytes_rec, conexiones, paq_env, paq_rec, dias, horas, minutos, segundos,interfaces_detail):
         """
         Constructor de la clase `DatosSistema`. Inicializa todos los atributos con los valores recibidos.
         
@@ -23,6 +23,7 @@ class DatosSistema:
         - horas: Horas desde el arranque del sistema.
         - minutos: Minutos desde el arranque del sistema.
         - segundos: Segundos desde el arranque del sistema.
+        - interfaces_detail: Lista de detalles de lso procesos en ejecución
         
         return:
         - Inicializa los atributos de la instancia con los valores proporcionados.
@@ -47,6 +48,7 @@ class DatosSistema:
         self.horas = horas
         self.minutos = minutos
         self.segundos = segundos
+        self.interfaces_detail = interfaces_detail
 
     def to_tuple(self):
         """
@@ -74,3 +76,15 @@ class DatosSistema:
         """
         return [(proc["pid"], proc["cpu_percent"], proc["memory_percent"], proc["vsz"], proc["rss"],
                  proc["username"], proc["name"], proc["exe"], proc["num_thread"], proc["status"]) for proc in self.proc_info]
+    
+    def to_tuple_interfaces_detail(self):
+        """
+        Convierte los detalles de las interfaces de red en una lista de tuplas para ser insertada en la base de datos.
+        
+        parameters: No recibe parámetros.
+        
+        return: Devuelve una LISTA de tuplas, donde cada tupla contiene los detalles de una interfaz:
+            (nombre, direccion, mascara, mac, broadcast)
+        """
+        return [(interfaz["nombre"], interfaz["direccion"], interfaz["mascara"], interfaz["mac"],
+                  interfaz["broadcast"]) for interfaz in self.interfaces_detail]

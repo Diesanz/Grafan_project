@@ -81,6 +81,17 @@ CREATE TABLE tiempo_activo (
         PRIMARY KEY(dias, horas, minutos, segundos)
 );
 
+CREATE TABLE interfaces (
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    nombre VARCHAR(255) NOT NULL,
+    direccion VARCHAR(255) NOT NULL,
+    mascara VARCHAR(255) NOT NULL,
+    mac VARCHAR(255) NOT NULL,
+    broadcast VARCHAR(255) NOT NULL,
+    PRIMARY KEY(nombre,direccion,mascara,mac)
+
+);
+
 DELIMITER //
 
 CREATE PROCEDURE `AddDatos` (

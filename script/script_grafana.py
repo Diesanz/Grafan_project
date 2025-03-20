@@ -44,7 +44,10 @@ def collect_data():
         }
         for proc in psutil.process_iter(['pid', 'name', 'exe', 'status', 'username', 'cpu_percent', 'memory_percent'])
     ]
-    
+
+    #Obtener detalles de las interfaces
+    interfaces_detail = interfaces_values()
+
     # Obtener el tiempo que el servidor ha estado activo
     boot_time = psutil.boot_time()  # Tiempo de arranque, momento en el que arrancó el servidor
     current_time = time.time()
@@ -74,10 +77,33 @@ def collect_data():
         dias=time_days,
         horas=time_hours,
         minutos=time_minutes,
-        segundos=time_seconds
+        segundos=time_seconds,
+        interfaces_detail = interfaces_detail
     )
 
     return data  # Devuelve el objeto `DatosSistema` con todos los datos del sistema
+
+def interfaces_values():
+    interfaces_info = []
+    for nombre_interfaz, interface_addreses in psutil.net_if_addrs().items():
+            for address in interface_addreses:
+                if str(address.family) == 'AddressFamily.AF_INET':
+                    direccion_ipv4 = address.address
+                    subnet = address.netmask
+                    broadcast = address.broadcast
+                elif str(address.family) == 'AddressFamily.AF_LINK':
+                    direccion_mac = address.address
+
+            if direccion_ipv4 or direccion_mac:
+                interfaces_info.append({
+                    "nombre": nombre_interfaz,
+                    "direccion": direccion_ipv4,
+                    "mascara": subnet,
+                    "mac": direccion_mac,
+                    "broadcast": broadcast
+                })
+    return interfaces_info
+    
 
 def insert_data(data: DatosSistema, conn):
     """
@@ -100,9 +126,13 @@ def insert_data(data: DatosSistema, conn):
             cursor.execute("DELETE FROM procesos;")
 
             # Insertar los detalles de los procesos
-            #Esto se realiza devido a que hay que insertar varios procesos en la tabla 
+            #Esto se realiza debido a que hay que insertar varios procesos en la tabla 
             cursor.executemany("""INSERT INTO procesos (pid, cpu_percent, memory_percent, vsz, rss, usuario, nombre, ruta, hilos, estado)
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", data.to_tuple_proc_info())  # `data.to_tuple_proc_info()` devuelve los detalles de los procesos
+
+            # Insertar los detalles de las interfaces de red.
+            cursor.executemany("""INSERT INTO interfaces (nombre, direccion, mascara, mac, broadcast) 
+                               VALUES (%s, %s, %s, %s, %s)""", data.to_tuple_interfaces_detail())
 
             # Llamar al procedimiento almacenado para insertar los otros datos del sistema
             cursor.callproc("AddDatos", data.to_tuple())  # `data.to_tuple()` devuelve los otros datos en formato adecuado para el procedimiento
