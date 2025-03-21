@@ -14,7 +14,7 @@ def interfaces_values():
             direccion_ipv4 = None
             subnet = None 
             broadcast = None  
-
+            net_io = psutil.net_io_counters(pernic=True)
             for address in interface_addreses:
                 if str(address.family) == 'AddressFamily.AF_INET':
                     direccion_ipv4 = address.address if address.address else "IPv4"
@@ -22,14 +22,17 @@ def interfaces_values():
                     broadcast = address.broadcast if address.broadcast else "N/A"
                 elif str(address.family) == 'AddressFamily.AF_PACKET':
                     direccion_mac = address.address if address.address else "MAC"
-
+            bytes_enviados = net_io[nombre_interfaz].bytes_sent if nombre_interfaz in net_io else 0
+            bytes_recibidos = net_io[nombre_interfaz].bytes_recv if nombre_interfaz in net_io else 0
             if direccion_ipv4 or direccion_mac:
                 interfaces_info.append({
                     "nombre": nombre_interfaz,
                     "direccion": direccion_ipv4,
                     "mascara": subnet,
                     "mac": direccion_mac,
-                    "broadcast": broadcast
+                    "broadcast": broadcast,
+                    "bytes_enviados" : bytes_enviados,
+                    "bytes_recibidos" : bytes_recibidos
                 })
 
     return interfaces_info
@@ -139,7 +142,8 @@ def insert_data(data: DatosSistema, conn):
             cursor.execute("DELETE FROM interfaces;")
 
             # Insertar los detalles de las interfaces de red.
-            cursor.executemany("""INSERT INTO interfaces (nombre, direccion, mascara, mac, broadcast) VALUES (%s, %s, %s, %s, %s)""", data.to_tuple_interfaces_detail())
+            cursor.executemany("""INSERT INTO interfaces (nombre, direccion, mascara, mac, broadcast, bytes_enviados, bytes_recibidos) 
+                               VALUES (%s, %s, %s, %s, %s, %s, %s)""", data.to_tuple_interfaces_detail())
 
             # Llamar al procedimiento almacenado para insertar los otros datos del sistema
             cursor.callproc("AddDatos", data.to_tuple())  # `data.to_tuple()` devuelve los otros datos en formato adecuado para el procedimiento

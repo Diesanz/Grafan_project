@@ -87,4 +87,4 @@ class DatosSistema:
             (nombre, direccion, mascara, mac, broadcast)
         """
         return [(interfaz["nombre"], interfaz["direccion"], interfaz["mascara"], interfaz["mac"],
-                  interfaz["broadcast"]) for interfaz in self.interfaces_detail]
+                  interfaz["broadcast"], interfaz["bytes_enviados"], interfaz["bytes_recibidos"]) for interfaz in self.interfaces_detail]

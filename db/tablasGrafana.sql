@@ -87,7 +87,9 @@ CREATE TABLE interfaces (
     direccion VARCHAR(255),
     mascara VARCHAR(255),
     mac VARCHAR(255),
-    broadcast VARCHAR(255)
+    broadcast VARCHAR(255),
+    bytes_enviados INT NOT NULL,
+    bytes_recibidos INT NOT NULL
 );
 
 DELIMITER //
