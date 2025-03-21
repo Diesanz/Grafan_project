@@ -82,11 +82,11 @@ Según estas características algunos casos de uso son los siguientes:
 
 Para realizar la instalación de Grafana en su versión Standalone Linux Binaries, se ejecutaron los siguientes comandos, que descargarán y descomprimirán el archivo respectivamente:
 
-\begin{minted}{bash}
+\begin{lstlisting}[language=bash]
 - wget https://dl.grafana.com/enterprise/release/grafana-
 enterprise-11.5.2.linux-amd64.tar.gz
 - tar -zxvf grafana-enterprise-11.5.2.linux-amd64.tar.gz
-\end{minted}
+\end{lstlisting}
 
 Una vez descomprimido todo se debe de iniciar el servidor con el comando \lstinline[language=bash]|stemctl start grafana-server.service| 
 y podemos confirmar que se ha iniciado si ejecutamos \lstinline[language=bash]|systemctl status grafana-server.service|.\\
@@ -112,7 +112,7 @@ Aquí podríamos explicar el esquema E/R y la estructura de la bbdd cuando esté
 \subsection{Conexión a la base de datos}\label{subsec:conexión-db}
 Este código define una conexión con la base de datos \textbf{MySQL} en Ubuntu. El script está desarrollado en Python y maneja tanto la conexión con la base de datos como su cierre.
 
-\begin{minted}{python}
+\begin{lstlisting}[language=python]
 def get_connection():
 
     try:
@@ -140,7 +140,7 @@ def close_connection(connection):
 
     if connection:
         connection.close()
-\end{minted}
+\end{lstlisting}
 
 Explicación:
 
@@ -159,11 +159,32 @@ Para iniciar la base de datos en el servidor es necesario acceder como root con 
     \item \lstinline{source /home/usuario/esi/db/tablasGrafana.sql;} $ \rightarrow $ ejecuta el archivo SQL que contiene las instrucciones para crear las tablas y almacenar datos en la base de datos 'grafana'.
 \end{itemize}
 
+\subsection{Script de creación de tablas}
+
+Lo primero que se puede ver en el script es el comando \lstinline{DROP TABLE IF EXISTS}, que tiene como objetivo asegurarse de que no existan tablas previas con los mismos nombres antes de crear unas nuevas. Especialmente tiene estas ventajas:
+
+\begin{itemize}
+    \item Evitar errores por duplicación.
+    \item Facilitar la ejecución repetida.
+    \item Asegurar un entorno limpio.
+    \item Evitar dependencias inválidas.
+\end{itemize}
+
+El siguiente comando distinto es \lstinline{DROP PROCEDURE IF EXISTS}, que tiene una función similar a \lstinline{DROP TABLE}, pero aplicada a procedimientos almacenados.\\
+
+Las tablas de la base de datos tiene en común que su clave primaria es el 'timestamp', que es una marca de tiempo que representa un momento específico. Debido a que no puede haber dos momentos de tiempo es un atributo ideal para ser la clave primaria de cada tabla.\\
+
+Más allá de la clave primaria, en cada tabla se recogen distintos tipos de datos según lo que se quiere recopilar, como datos de tipo INT, FLOAT, VARCHAR(255), que todos estos tienen la peculiaridad de que no pueden ser un valor nulo.\\
+
+\newpage
+FALTA EXPLICAR EL PROCEDIMIENTO Y LO SIGUIENTE, QUE NO SE COMO EXPLICARLO BIEN
+\newpage
+
 \section{Servicio de Ubuntu}\label{sec:servicio-ubuntu}
 Este código define un servicio de \textbf{systemd} de Ubuntu, que ejecuta un script desarrollado en python3 dedicado a la recolección de datos del servidor y enviarlos a Grafana. El servicio depende de MySQL y se reinicia automáticamente si falla.
 Este código se encuentra dentro de \textbf{/etc/systemd/system/} con el nombre de \textbf{programa-grupo6.service}.
 
-\begin{minted}{bash}
+\begin{lstlisting}[language=bash]
 [Unit]
 Description=Daemon programa esi
 After=network.target
@@ -179,7 +200,7 @@ Group=usuario
 
 [Install]
 WantedBy=multi-user.target 
-\end{minted}
+\end{lstlisting}
 
 Explicación:
 
@@ -192,7 +213,7 @@ Explicación:
 \section{Explicación del código}
 \subsection{Bucle while del servicio}\label{subsec:bucle-while}
 
-\begin{minted}{python}
+\begin{lstlisting}[language=python]
 conn = None
 
 try:
@@ -200,21 +221,26 @@ try:
     conn = get_connection()
 
     if conn:
-        print("Conexión a la base de datos establecida correctamente")
+        print("Conexion a la base de datos establecida
+        correctamente")
 
-        """Ejecuta la recolección de datos e inserción en la BD en intervalos regulares"""
+        """Ejecuta la recoleccion de datos e insercion 
+        en la BD en intervalos regulares"""
         while True:
             data = collect_data()
             if data:
                 insert_data(data, conn)
 
-            time.sleep(5)  # Espera 10 segundos antes de la siguiente medición
+            time.sleep(5)  # Espera 10 segundos antes 
+            de la siguiente medicion
 except Error as e:
     print(f"Error al conectar bas de datos: {e}")
 finally:
-    if conn:  # Si la conexión fue establecida, cierra la conexión
-        close_connection(conn)  # Cerrar la conexión al finalizar el programa
-\end{minted}
+    # Si la conexion fue establecida, cierra la conexion
+    if conn:  
+        # Cerrar la conexion al finalizar el programa
+        close_connection(conn)  
+\end{lstlisting}
 
 Explicación:
 
@@ -246,7 +272,7 @@ A continuación se hará un listado de las métricas recogidas con la librería 
     \item Número de bytes enviados y recibidos  $ \rightarrow $ \lstinline{psutil.net_io_counters().bytes_sent} y \lstinline{psutil.net_io_counters().bytes_recv}
     \item Número de conexiones de red activas si las hubiera  $ \rightarrow $ \lstinline{len(psutil.net_connections(kind='inet'))}
     \item Información detallada de los procesos en ejecución  $ \rightarrow $ para ello se creó una clase que recopilaba todos los detalles de los procesos:
-    \begin{minted}{python}
+    \begin{lstlisting}[language=python]
         proc_detail = [
         {
             "pid": proc.info["pid"],
@@ -268,7 +294,7 @@ A continuación se hará un listado de las métricas recogidas con la librería 
         'status', 'username', 'cpu_percent', 'memory_percent'])
         #if proc.info["status"] == "running"
     ]
-    \end{minted}
+    \end{lstlisting}
     \item Momento en el que se arrancó el servidor $ \rightarrow $ \lstinline{psutil.boot_time()}
 \end{enumerate}
 
@@ -578,7 +604,10 @@ Esta consulta muestra el último número de días, horas, minutos y segundos alm
     \label{fig:enter-label}
 \end{figure}
 
-\section{Distribuciónde trabajo y organización}
+\section{Distribución de trabajo y organización}
 
-\section{Bibliografia}
+\section{Bibliografía}
+
+
+
 \end{document}
