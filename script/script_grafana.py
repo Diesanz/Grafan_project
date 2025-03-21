@@ -15,6 +15,7 @@ def interfaces_values():
             subnet = None 
             broadcast = None  
             net_io = psutil.net_io_counters(pernic=True)
+
             for address in interface_addreses:
                 if str(address.family) == 'AddressFamily.AF_INET':
                     direccion_ipv4 = address.address if address.address else "IPv4"
@@ -22,8 +23,10 @@ def interfaces_values():
                     broadcast = address.broadcast if address.broadcast else "N/A"
                 elif str(address.family) == 'AddressFamily.AF_PACKET':
                     direccion_mac = address.address if address.address else "MAC"
+
             bytes_enviados = net_io[nombre_interfaz].bytes_sent if nombre_interfaz in net_io else 0
             bytes_recibidos = net_io[nombre_interfaz].bytes_recv if nombre_interfaz in net_io else 0
+            
             if direccion_ipv4 or direccion_mac:
                 interfaces_info.append({
                     "nombre": nombre_interfaz,
