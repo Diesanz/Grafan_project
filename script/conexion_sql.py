@@ -1,4 +1,4 @@
-import os
+
 import pymysql
 
 
@@ -14,8 +14,8 @@ def get_connection():
             host= "localhost",
             port= int(3306),
             database= "grafana",
-            user= "grafanaReader",
-            password= "Grupo6esi",
+            user= "grafanareader",
+            password= "password",
             charset='utf8mb4',  # Evita problemas de encoding
             cursorclass=pymysql.cursors.DictCursor
         )

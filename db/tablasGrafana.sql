@@ -78,18 +78,16 @@ CREATE TABLE tiempo_activo (
         horas INT NOT NULL,
         minutos INT NOT NULL,
         segundos INT NOT NULL,
-        PRIMARY KEY(dias, horas, minutos, segundos)
+        PRIMARY KEY(timestamp)
 );
 
 CREATE TABLE interfaces (
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    nombre VARCHAR(255) NOT NULL,
-    direccion VARCHAR(255) NOT NULL,
-    mascara VARCHAR(255) NOT NULL,
-    mac VARCHAR(255) NOT NULL,
-    broadcast VARCHAR(255) NOT NULL,
-    PRIMARY KEY(nombre,direccion,mascara,mac)
-
+    nombre VARCHAR(255),
+    direccion VARCHAR(255),
+    mascara VARCHAR(255),
+    mac VARCHAR(255),
+    broadcast VARCHAR(255)
 );
 
 DELIMITER //
@@ -144,6 +142,7 @@ BEGIN
     -- Insertar información de red
     INSERT INTO red (timestamp, bytes_enviados, bytes_recibidos, conexiones_activas, paquetes_enviados, paquetes_recibidos) VALUES (ts, bytes_env, bytes_rec, conexiones, paq_env, paq_rec);
 
+    DELETE FROM tiempo_activo;
     INSERT INTO tiempo_activo(timestamp, dias, horas, minutos, segundos) VALUES (ts, d, h, m, s);
 
     COMMIT; -- Confirmar los cambios si todo va bien
