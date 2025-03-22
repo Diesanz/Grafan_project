@@ -1,10 +1,17 @@
-import time                                                                                                                                                                                  
-import psutil                                                                                                                                                                                
-import mysql.connector                                                                                                                                                                       
-from datetime import datetime                                                                                                                                                                
-from mysql.connector import Error                                                                                                                                                            
-from conexion_sql import get_connection, close_connection                                                                                                                                    
-from datos_sistema import DatosSistema                                                                                                                                                       
+import time
+
+import psutil
+
+import mysql.connector
+
+from datetime import datetime
+
+from mysql.connector import Error
+
+from conexion_sql import get_connection, close_connection
+
+from datos_sistema import DatosSistema
+
 
 
 def interfaces_values():
@@ -12,10 +19,9 @@ def interfaces_values():
     for nombre_interfaz, interface_addreses in psutil.net_if_addrs().items():
             direccion_mac = None
             direccion_ipv4 = None
-            subnet = None 
-            broadcast = None  
+            subnet = None
+            broadcast = None
             net_io = psutil.net_io_counters(pernic=True)
-
             for address in interface_addreses:
                 if str(address.family) == 'AddressFamily.AF_INET':
                     direccion_ipv4 = address.address if address.address else "IPv4"
@@ -23,10 +29,8 @@ def interfaces_values():
                     broadcast = address.broadcast if address.broadcast else "N/A"
                 elif str(address.family) == 'AddressFamily.AF_PACKET':
                     direccion_mac = address.address if address.address else "MAC"
-
             bytes_enviados = net_io[nombre_interfaz].bytes_sent if nombre_interfaz in net_io else 0
             bytes_recibidos = net_io[nombre_interfaz].bytes_recv if nombre_interfaz in net_io else 0
-            
             if direccion_ipv4 or direccion_mac:
                 interfaces_info.append({
                     "nombre": nombre_interfaz,
@@ -40,20 +44,34 @@ def interfaces_values():
 
     return interfaces_info
 
-def collect_data(boot_time):                                                                                                                                                                          
-    """                                                                                                                                                                                      
-    Recolecta los datos del sistema y los almacena en un objeto DatosSistema.                                                                                                                
-                                                                                                                                                                                             
-    parameters: No recibe parámetros.                                                                                                                                                        
-                                                                                                                                                                                             
-    return: Devuelve un objeto `DatosSistema` con los siguientes atributos:                                                                                                                  
-        - carga_cpu: porcentaje de carga de la CPU.                                                                                                                                          
-        - frecuencia_cpu: frecuencia actual de la CPU.                                                                                                                                       
-        - mem_ram: porcentaje de uso de la memoria RAM.                                                                                                                                      
-        - mem_swap: porcentaje de uso de la memoria swap.                                                                                                                                    
-        - espacio_disco: porcentaje de uso del disco.                                                                                                                                        
-        - io_operaciones: número de operaciones de lectura en disco.                                                                                                                         
-        - proc_detail: lista con detalles de los procesos en ejecución.                                                                                                                      
+def collect_data(boot_time):
+
+    """
+
+    Recolecta los datos del sistema y los almacena en un objeto DatosSistema.
+
+
+
+    parameters: No recibe parámetros.
+
+
+
+    return: Devuelve un objeto `DatosSistema` con los siguientes atributos:
+
+        - carga_cpu: porcentaje de carga de la CPU.
+
+        - frecuencia_cpu: frecuencia actual de la CPU.
+
+        - mem_ram: porcentaje de uso de la memoria RAM.
+
+        - mem_swap: porcentaje de uso de la memoria swap.
+
+        - espacio_disco: porcentaje de uso del disco.
+
+        - io_operaciones: número de operaciones de lectura en disco.
+
+        - proc_detail: lista con detalles de los procesos en ejecución.
+
         - num_proc: número total de procesos en ejecución.
         - bytes_env: cantidad de bytes enviados por la red.
         - bytes_rec: cantidad de bytes recibidos por la red.
@@ -61,6 +79,7 @@ def collect_data(boot_time):
         - paq_env: número de paquetes enviados.
         - paq_rec: número de paquetes recibidos.
         - dias, horas, minutos, segundos: tiempo desde el arranque del sistema.
+        - carga_sis_1, carga_sis_5, carga_sis_15: carga del sistema en 1, 5, 15 minutos.
     """
     # Obtener detalles de los procesos
     proc_detail = [
@@ -82,7 +101,7 @@ def collect_data(boot_time):
     #Obtener detalles de las interfaces
     interfaces_detail = interfaces_values()
 
-   
+
     current_time = time.time()
     time_seconds = current_time - boot_time
 
@@ -91,7 +110,7 @@ def collect_data(boot_time):
     time_hours = (time_seconds % 86400) // 3600
     time_minutes = (time_seconds % 3600) // 60
     time_seconds = time_seconds % 60
-    
+
     # Crear el objeto DatosSistema con los datos recolectados
     data = DatosSistema(
         carga_cpu=psutil.cpu_percent(interval=1),
@@ -111,19 +130,22 @@ def collect_data(boot_time):
         horas=time_hours,
         minutos=time_minutes,
         segundos=time_seconds,
-        interfaces_detail = interfaces_detail
+        interfaces_detail = interfaces_detail,
+        carga_sis_1=psutil.getloadavg()[0],
+        carga_sis_5=psutil.getloadavg()[1],
+        carga_sis_15=psutil.getloadavg()[2]
     )
 
     return data  # Devuelve el objeto `DatosSistema` con todos los datos del sistema
-    
+
 def insert_data(data: DatosSistema, conn):
     """
     Inserta los datos recolectados en la base de datos utilizando un procedimiento almacenado.
-    
+
     parameters:
     - `data`: Un objeto `DatosSistema` que contiene los datos recolectados del sistema.
     - `conn`: Conexión a la base de datos MySQL.
-    
+
     return: No devuelve nada. Inserta los datos en la base de datos.
     """
     if conn:
@@ -137,7 +159,7 @@ def insert_data(data: DatosSistema, conn):
             cursor.execute("DELETE FROM procesos;")
 
             # Insertar los detalles de los procesos
-            #Esto se realiza debido a que hay que insertar varios procesos en la tabla 
+            #Esto se realiza debido a que hay que insertar varios procesos en la tabla
             cursor.executemany("""INSERT INTO procesos (pid, cpu_percent, memory_percent, vsz, rss, usuario, nombre, ruta, hilos, estado)
                                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", data.to_tuple_proc_info())  # `data.to_tuple_proc_info()` devuelve los detalles de los procesos
 
@@ -145,7 +167,7 @@ def insert_data(data: DatosSistema, conn):
             cursor.execute("DELETE FROM interfaces;")
 
             # Insertar los detalles de las interfaces de red.
-            cursor.executemany("""INSERT INTO interfaces (nombre, direccion, mascara, mac, broadcast, bytes_enviados, bytes_recibidos) 
+            cursor.executemany("""INSERT INTO interfaces (nombre, direccion, mascara, mac, broadcast, bytes_enviados, bytes_recibidos)
                                VALUES (%s, %s, %s, %s, %s, %s, %s)""", data.to_tuple_interfaces_detail())
 
             # Llamar al procedimiento almacenado para insertar los otros datos del sistema

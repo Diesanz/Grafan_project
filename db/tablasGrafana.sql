@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS hilos;
 DROP TABLE IF EXISTS interfaces;
 DROP TABLE IF EXISTS puertos_abiertos;
 DROP TABLE IF EXISTS tiempo_activo;
+DROP TABLE IF EXISTS sistema;
 -- DROP TABLE IF EXISTS temperatura;
 
 
@@ -92,6 +93,14 @@ CREATE TABLE interfaces (
     bytes_recibidos INT NOT NULL
 );
 
+CREATE TABLE sistema (
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    carga1 FLOAT NOT NULL,
+    carga5 FLOAT NOT NULL,
+    carga15 FLOAT NOT NULL,
+    PRIMARY KEY(timestamp)
+);
+
 DELIMITER //
 
 CREATE PROCEDURE `AddDatos` (
@@ -110,7 +119,10 @@ CREATE PROCEDURE `AddDatos` (
     IN `d` INT,
     IN `h` INT,
     IN `m` INT,
-    IN `s` INT
+    IN `s` INT,
+    IN `carga_sis_1` FLOAT,
+    IN `carga_sis_5` FLOAT,
+    IN `carga_sis_15` FLOAT
 )
 BEGIN
     DECLARE ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
@@ -146,6 +158,9 @@ BEGIN
 
     DELETE FROM tiempo_activo;
     INSERT INTO tiempo_activo(timestamp, dias, horas, minutos, segundos) VALUES (ts, d, h, m, s);
+
+    DELETE FROM sistema;
+    INSERT INTO sistema(timestamp, carga1, carga5, carga15) VALUES (ts, carga_sis_1, carga_sis_5, carga_sis_15);
 
     COMMIT; -- Confirmar los cambios si todo va bien
 END //
