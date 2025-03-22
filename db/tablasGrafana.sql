@@ -98,6 +98,7 @@ CREATE TABLE sistema (
     carga1 FLOAT NOT NULL,
     carga5 FLOAT NOT NULL,
     carga15 FLOAT NOT NULL,
+    nucleos_log INT NOT NULL,
     PRIMARY KEY(timestamp)
 );
 
@@ -122,7 +123,8 @@ CREATE PROCEDURE `AddDatos` (
     IN `s` INT,
     IN `carga_sis_1` FLOAT,
     IN `carga_sis_5` FLOAT,
-    IN `carga_sis_15` FLOAT
+    IN `carga_sis_15` FLOAT,
+    IN `nucleos_log` INT
 )
 BEGIN
     DECLARE ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
@@ -160,7 +162,7 @@ BEGIN
     INSERT INTO tiempo_activo(timestamp, dias, horas, minutos, segundos) VALUES (ts, d, h, m, s);
 
     DELETE FROM sistema;
-    INSERT INTO sistema(timestamp, carga1, carga5, carga15) VALUES (ts, carga_sis_1, carga_sis_5, carga_sis_15);
+    INSERT INTO sistema(timestamp, carga1, carga5, carga15, nucleos_log) VALUES (ts, carga_sis_1, carga_sis_5, carga_sis_15, nucleos_log);
 
     COMMIT; -- Confirmar los cambios si todo va bien
 END //

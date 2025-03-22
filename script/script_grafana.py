@@ -123,7 +123,8 @@ def collect_data(boot_time):
         interfaces_detail = interfaces_detail,
         carga_sis_1=psutil.getloadavg()[0],
         carga_sis_5=psutil.getloadavg()[1],
-        carga_sis_15=psutil.getloadavg()[2]
+        carga_sis_15=psutil.getloadavg()[2],
+        nucleos_log = psutil.cpu_count(logical=False)
     )
 
     return data  # Devuelve el objeto `DatosSistema` con todos los datos del sistema

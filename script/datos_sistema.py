@@ -2,7 +2,7 @@ class DatosSistema:
     def __init__(self, carga_cpu, frecuencia_cpu, mem_ram, mem_swap,
                  espacio_disco, io_operaciones, proc_detail, num_proc,
                  bytes_env, bytes_rec, conexiones, paq_env, paq_rec, dias, horas, minutos, segundos,interfaces_detail,
-                 carga_sis_1, carga_sis_5, carga_sis_15):
+                 carga_sis_1, carga_sis_5, carga_sis_15, nucleos_log):
         """
         Constructor de la clase `DatosSistema`. Inicializa todos los atributos con los valores recibidos.
 
@@ -56,6 +56,7 @@ class DatosSistema:
         self.carga_sis_1 = carga_sis_1
         self.carga_sis_5 = carga_sis_5
         self.carga_sis_15 = carga_sis_15
+        self.nucleos_log = nucleos_log
 
     def to_tuple(self):
         """
@@ -73,7 +74,7 @@ class DatosSistema:
                 self.espacio_disco, self.io_operaciones, self.num_proc,
                 self.bytes_env, self.bytes_rec, self.conexiones, self.paq_env, self.paq_rec,
                 self.dias, self.horas, self.minutos, self.segundos,
-                self.carga_sis_1, self.carga_sis_5, self.carga_sis_15)
+                self.carga_sis_1, self.carga_sis_5, self.carga_sis_15, self.nucleos_log)
 
     def to_tuple_proc_info(self):
         """
