@@ -298,6 +298,45 @@ A continuación se hará un listado de las métricas recogidas con la librería 
     ]
     \end{lstlisting}
     \item Momento en el que se arrancó el servidor $ \rightarrow $ \lstinline{psutil.boot_time()}
+    \item Información detallada de las interfaces de red $ \rightarrow $ para ello se creó una clase que recopilaba todos los detalles de las distintas interfaces de red:
+    \begin{lstlisting}[language=python]
+    interfaces_info = []
+    for nombre_interfaz, interface_addreses in
+    psutil.net_if_addrs().items():
+            direccion_mac = None
+            direccion_ipv4 = None
+            subnet = None
+            broadcast = None
+            net_io = psutil.net_io_counters(pernic=True)
+            for address in interface_addreses:
+                if str(address.family) == 
+                'AddressFamily.AF_INET':
+                    direccion_ipv4 = address.address 
+                        if address.address else "IPv4"
+                    subnet = address.netmask 
+                        if address.netmask else "N/A"
+                    broadcast = address.broadcast 
+                        if address.broadcast else "N/A"
+                elif str(address.family) ==
+                'AddressFamily.AF_PACKET':
+                    direccion_mac = address.address 
+                        if address.address else "MAC"
+            bytes_enviados = net_io[nombre_interfaz].bytes_sent 
+                if nombre_interfaz in net_io else 0
+            bytes_recibidos = net_io[nombre_interfaz].bytes_recv
+                if nombre_interfaz in net_io else 0
+            if direccion_ipv4 or direccion_mac:
+                interfaces_info.append({
+                    "nombre": nombre_interfaz,
+                    "direccion": direccion_ipv4,
+                    "mascara": subnet,
+                    "mac": direccion_mac,
+                    "broadcast": broadcast,
+                    "bytes_enviados" : bytes_enviados,
+                    "bytes_recibidos" : bytes_recibidos
+                })
+    \end{lstlisting}
+    \item Carga del sistema durante 1, 5, 15 minutos $ \rightarrow $ \lstinline{psutil.getloadavg()}
 \end{enumerate}
 
 \subsection{Almacenamiento de datos}\label{subsec:almacenamiento-datos}
@@ -603,6 +642,57 @@ Esta consulta muestra el último número de días, horas, minutos y segundos alm
     \centering
     \includegraphics[width=1.0\linewidth]{tiempo_activo.png}
     \caption{Tiempo activo}
+    \label{fig:enter-label}
+\end{figure}
+
+\subsection{Interfaces de red}
+
+La información de las interfaces de red se muestra en Grafana en un panel de tipo ''Table'', permitiendo visualizar y filtrar claramente toda la información recopilada de las distintas interfaces de red.\\
+
+La consulta SQL que se ha utilizado es:
+
+\begin{lstlisting}[language=SQL]
+    SELECT nombre as Nombre, direccion as Dirección,
+        mascara as Máscara, mac as Mac 
+    FROM grafana.interfaces 
+\end{lstlisting}
+
+Esta consulta muestra la siguiente información de las interfaces de red:
+
+\begin{itemize}
+    \item Nombre: es el nombre que se asigna a una interfaz de red.
+    \item Dirección IP: es el identificador único asignado a una interfaz de red dentro de una red.
+    \item Máscara de red: determina qué parte de la dirección IP identifica a la red y qué parte identifica el host.
+    \item Dirección MAC: es el identificador físico de la tarjeta de red.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{interfaces_red.png}
+    \caption{Información de las interfaces de red}
+    \label{fig:enter-label}
+\end{figure}
+
+\subsection{Carga del sistema}
+
+La carga del sistema se muestra en Grafana en un panel de tipo ''Gauge'', ya que este panel es perfecto para visualizar el valor inmediato de la carga y una semicircunferencia indicando el estado de la carga.\\
+
+Nuestro sistema tiene dos núcleos, por lo que el valor que se representa en nuestra semicircunferencia llega hasta cuatro. Si la carga se encuentra entre el 0 y el 2, quiere decir que es una carga normal (verde), si se encuentra entre el 2 y el 3'2, quiere decir que es una carga media (amarillo), y si supera los 3'2 hasta 4, quiere decir que la carga es alta (rojo).\\
+
+La consulta SQL que se ha utilizado es:
+
+\begin{lstlisting}[language=SQL]
+    SELECT carga1 as 1minuto, carga5 as 5minutos, 
+        carga15 as 15minutos 
+    FROM grafana.sistema
+\end{lstlisting}
+
+Esta consulta muestra el valor inmediato de la carga del sistema en 1, 5 y 15 minutos.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{carga_sistema.png}
+    \caption{Carga del sistema}
     \label{fig:enter-label}
 \end{figure}
 
