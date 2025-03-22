@@ -1,6 +1,4 @@
-
 import pymysql
-
 
 def get_connection():
     try:
@@ -15,7 +13,7 @@ def get_connection():
             port= int(3306),
             database= "grafana",
             user= "grafanareader",
-            password= "password",
+            password= "Grupo6esi",
             charset='utf8mb4',  # Evita problemas de encoding
             cursorclass=pymysql.cursors.DictCursor
         )

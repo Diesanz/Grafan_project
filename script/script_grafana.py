@@ -1,18 +1,11 @@
 import time
-
 import psutil
-
 import mysql.connector
 
 from datetime import datetime
-
 from mysql.connector import Error
-
 from conexion_sql import get_connection, close_connection
-
 from datos_sistema import DatosSistema
-
-
 
 def interfaces_values():
     interfaces_info = []
@@ -22,6 +15,7 @@ def interfaces_values():
             subnet = None
             broadcast = None
             net_io = psutil.net_io_counters(pernic=True)
+
             for address in interface_addreses:
                 if str(address.family) == 'AddressFamily.AF_INET':
                     direccion_ipv4 = address.address if address.address else "IPv4"
@@ -29,8 +23,10 @@ def interfaces_values():
                     broadcast = address.broadcast if address.broadcast else "N/A"
                 elif str(address.family) == 'AddressFamily.AF_PACKET':
                     direccion_mac = address.address if address.address else "MAC"
+
             bytes_enviados = net_io[nombre_interfaz].bytes_sent if nombre_interfaz in net_io else 0
             bytes_recibidos = net_io[nombre_interfaz].bytes_recv if nombre_interfaz in net_io else 0
+
             if direccion_ipv4 or direccion_mac:
                 interfaces_info.append({
                     "nombre": nombre_interfaz,
@@ -47,14 +43,8 @@ def interfaces_values():
 def collect_data(boot_time):
 
     """
-
     Recolecta los datos del sistema y los almacena en un objeto DatosSistema.
-
-
-
     parameters: No recibe parámetros.
-
-
 
     return: Devuelve un objeto `DatosSistema` con los siguientes atributos:
 
@@ -81,6 +71,7 @@ def collect_data(boot_time):
         - dias, horas, minutos, segundos: tiempo desde el arranque del sistema.
         - carga_sis_1, carga_sis_5, carga_sis_15: carga del sistema en 1, 5, 15 minutos.
     """
+
     # Obtener detalles de los procesos
     proc_detail = [
         {
@@ -100,7 +91,6 @@ def collect_data(boot_time):
 
     #Obtener detalles de las interfaces
     interfaces_detail = interfaces_values()
-
 
     current_time = time.time()
     time_seconds = current_time - boot_time
