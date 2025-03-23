@@ -97,5 +97,6 @@ class DatosSistema:
         return: Devuelve una LISTA de tuplas, donde cada tupla contiene los detalles de una interfaz:
             (nombre, direccion, mascara, mac, broadcast)
         """
+        
         return [(interfaz["nombre"], interfaz["direccion"], interfaz["mascara"], interfaz["mac"],
                   interfaz["broadcast"], interfaz["bytes_enviados"], interfaz["bytes_recibidos"]) for interfaz in self.interfaces_detail]
