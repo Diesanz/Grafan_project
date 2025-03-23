@@ -31,7 +31,8 @@ class DatosSistema:
 
         return:
         - Inicializa los atributos de la instancia con los valores proporcionados.
-        """        
+        """
+                
         self.carga_cpu = carga_cpu
         self.frecuencia_cpu = frecuencia_cpu
         self.mem_ram = mem_ram
