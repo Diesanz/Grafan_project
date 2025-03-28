@@ -8,6 +8,9 @@
 \usepackage{hyperref}
 \usepackage[backend=bibtex]{biblatex}
 \addbibresource{bibliografia.bib}
+\usepackage[a4paper, top=3cm, bottom=3cm, left=3.5cm, right=3.5cm]{geometry}
+
+
 
 \lstset{
     language=bash,
@@ -106,19 +109,17 @@ Grafana necesita estar conectada a una base de datos para poder crear sus tablas
 
 En nuestra práctica hemos conectado una base de datos MySQL llamada ''grafana'' con URL host ''localhost:3306'' debido a que 3306 es el puerto predeterminado de MySQL.
 
-\newpage
 \subsection{Diagrama y estructura de la base de datos}
 A continuación se muestra el diagrama que ilustra la estructura de la base de datos diseñada para la recolección de datos de rendimiento del servidor.
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=1\linewidth]{Práctica1_ Grafana/ESI-Grupo6-DB.drawio (3).png}
+    \includegraphics[width=0.8\linewidth]{Práctica1_ Grafana/ESI-Grupo6-DB.drawio (3).png}
     \caption{Diagrama de la Base de Datos}
     \label{fig:diagrama-DB}
 \end{figure}
 
-\newpage
 Para una mejor comprensión del esquema, se proporciona a continuación una breve descripción de cada tabla y los atributos que la componen:\\
-
 
 \begin{enumerate}
     \item \textbf{CPU:} Tabla para almacenar información sobre el uso del procesador (CPU).
@@ -202,32 +203,28 @@ Este código define una conexión con la base de datos \textbf{MySQL} en Ubuntu.
 
 \begin{lstlisting}[language=python]
 def get_connection():
-
     try:
-        host = "localhost"
-        port = 3306
-        database = "grafana"
-        user = "grafanareader"
-        password = "Grupo6esi"
-        
+        """
+        Establece una conexión con la base de datos MariaDB
+        utilizando los parámetros proporcionados.
+                
+        return: Devuelve un objeto de tipo conexión a la base
+        de datos si la conexión es exitosa.
+                Si ocurre un error, devuelve None.
+        """
         connection = pymysql.connect(
-            host=host,
-            port=port,
-            database=database,
-            user=user,
-            password=password,
+            host= "localhost",
+            port= int(3306),
+            database= "grafana",
+            user= "grafanareader",
+            password= "Grupo6esi",
             charset='utf8mb4',  # Evita problemas de encoding
             cursorclass=pymysql.cursors.DictCursor
         )
         return connection
     except pymysql.MySQLError as e:
-        print("Error al conectarse a la base de datos:", e)
+        print("Error al conectarse a la base de datos:" + str(e))
         return None
-
-def close_connection(connection):
-
-    if connection:
-        connection.close()
 \end{lstlisting}
 
 Explicación:
@@ -264,9 +261,9 @@ Las tablas de la base de datos tiene en común que su clave primaria es el 'time
 
 Más allá de la clave primaria, en cada tabla se recogen distintos tipos de datos según lo que se quiere recopilar, como datos de tipo INT, FLOAT, VARCHAR(255), que todos estos tienen la peculiaridad de que no pueden ser un valor nulo.\\
 
-\newpage
-Además, en este script se define el procedimiento 'AddDatos', cuya declaración es la siguiente: \\
-\begin{lstlisting}[style=sqlProcedure]
+Además, en este script se define el procedimiento 'AddDatos', cuya declaración es la siguiente: 
+
+\begin{lstlisting}[language=sql]
 
 CREATE PROCEDURE `AddDatos` (
     IN `carga_cpu` FLOAT,
@@ -301,9 +298,6 @@ Posteriormente, comienza una transacción para asegurar que todas las operacione
 Comenzada la transacción, el procedimiento introduce los datos que ha recibido como parámetros en las tablas correspondientes (excepto en las tablas interfaces y procesos). También, antes de introducir los nuevos datos, borra los datos de las tablas  \textbf{CPU, Disco, Num\_procesos, Tiempo\_activo y Sistema} que estaban registrados anteriormente.\\
 
 Finalmente, Si todas las operaciones se realizan con éxito, confirma la transacción (COMMIT), guardando los cambios en la base de datos.
-
-
-\newpage
 
 \section{Servicio de Ubuntu}\label{sec:servicio-ubuntu}
 Este código define un servicio de \textbf{systemd} de Ubuntu, que ejecuta un script desarrollado en python3 dedicado a la recolección de datos del servidor y enviarlos a Grafana. El servicio depende de MySQL y se reinicia automáticamente si falla.
