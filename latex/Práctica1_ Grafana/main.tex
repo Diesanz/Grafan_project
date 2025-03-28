@@ -149,18 +149,18 @@ Para una mejor comprensión del esquema, se proporciona a continuación una brev
         \item \textbf{pid}: Identificador del proceso.
         \item \textbf{cpu\_percent}: Porcentaje de uso de la CPU por el proceso.
         \item \textbf{memory\_percent}: Porcentaje de uso de la memoria RAM por el proceso.
-        \item \textbf{vsz}: Tamaño virtual del proceso en KB.
-        \item \textbf{rss}: Tamaño residente del proceso en KB.
+        \item \textbf{vsz}: Tamaño virtual del proceso en memoria.
+        \item \textbf{rss}: Tamaño real del proceso en RAM.
         \item \textbf{usuario}: Usuario que ejecuta el proceso.
         \item \textbf{nombre}: Nombre del proceso.
         \item \textbf{ruta}: Ruta del ejecutable del proceso.
         \item \textbf{hilos}: Número de hilos del proceso.
-        \item \textbf{estado}: Estado del proceso (ej. "ejecutando", "dormido").
+        \item \textbf{estado}: Estado del proceso ("ejecutándose", "inactivo","durmiendo",etc).
     \end{itemize}
     \item \textbf{Num\_procesos:} Tabla para almacenar el número total de procesos en ejecución.
     \begin{itemize}
         \item \textbf{timestamp}: Marca de tiempo de la medición.
-        \item \textbf{operaciones}: Número total de procesos.
+        \item \textbf{numero}: Número total de procesos en ejecución.
     \end{itemize}
     \item \textbf{Red:} Tabla para almacenar información sobre el tráfico de red.
     \begin{itemize}
@@ -568,8 +568,8 @@ Esta consulta recupera todas las columnas de la tabla `entradasalida` para los �
 
 \subsection{Bytes enviados y recibidos}
 
-Los bytes enviados y recibidos se muestran en Grafana en paneles de tipo ``Time Series'' con un gráfico de líneas. Esta representación facilita el seguimiento del tráfico de red a lo largo del tiempo. Además se muestran los últimos bytes tanto enviados como recibidos y la suma total de todos.\\
-
+Los bytes enviados y recibidos se muestran en Grafana en paneles de tipo ``Time Series'' con un gráfico de líneas. Esta representación facilita el seguimiento del tráfico de red a lo largo del tiempo. Además se muestran los últimos bytes tanto enviados como recibidos y la suma total de todos.
+\newpage
 Las consultas SQL utilizadas son:
 
 \begin{lstlisting}[language=SQL]
@@ -691,7 +691,7 @@ Esta consulta consigue la suma de todos los hilos que utilizan cada proceso que 
     \caption{Número de hilos totales}
     \label{fig:enter-label}
 \end{figure}
-
+\newpage
 \subsection{Estado de los procesos}
 
 El estado de los procesos es mostrado en Grafana en un panel de tipo ''Pie chart'', que representa una circunferencia dividida en secciones según el porcentaje de uso de cada sección.\\
@@ -774,7 +774,7 @@ La consulta SQL que se ha utilizado es:
         mascara as Máscara, mac as Mac 
     FROM grafana.interfaces 
 \end{lstlisting}
-
+\newpage
 Esta consulta muestra la siguiente información de las interfaces de red:
 
 \begin{itemize}
