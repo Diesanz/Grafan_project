@@ -107,9 +107,95 @@ Grafana necesita estar conectada a una base de datos para poder crear sus tablas
 En nuestra práctica hemos conectado una base de datos MySQL llamada ''grafana'' con URL host ''localhost:3306'' debido a que 3306 es el puerto predeterminado de MySQL.
 
 \newpage
-\subsection{Esquema entidad relación}
-Aquí podríamos explicar el esquema E/R y la estructura de la bbdd cuando esté completa.
+\subsection{Diagrama y estructura de la base de datos}
+A continuación se muestra el diagrama que ilustra la estructura de la base de datos diseñada para la recolección de datos de rendimiento del servidor.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Práctica1_ Grafana/ESI-Grupo6-DB.drawio (3).png}
+    \caption{Diagrama de la Base de Datos}
+    \label{fig:diagrama-DB}
+\end{figure}
+
 \newpage
+Para una mejor comprensión del esquema, se proporciona a continuación una breve descripción de cada tabla y los atributos que la componen:\\
+
+
+\begin{enumerate}
+    \item \textbf{CPU:} Tabla para almacenar información sobre el uso del procesador (CPU).
+    \begin{itemize}
+        \item \textbf{timestamp}: Marca de tiempo de la medición.
+        \item \textbf{carga}: Porcentaje de uso de la CPU.
+        \item \textbf{frecuencia}: Frecuencia de la CPU en GHz.
+    \end{itemize}
+    \item \textbf{Memoria:} Tabla para almacenar información sobre el uso de la memoria RAM y el espacio de intercambio (swap).
+    \begin{itemize}
+        \item \textbf{timestamp}: Marca de tiempo de la medición.
+        \item \textbf{ram}: Cantidad de memoria RAM utilizada en GB.
+        \item \textbf{swap}: Cantidad de espacio de intercambio utilizado en GB.
+    \end{itemize}
+    \item \textbf{Disco:} Tabla para almacenar información sobre el espacio utilizado en el disco.
+    \begin{itemize}
+        \item \textbf{timestamp}: Marca de tiempo de la medición.
+        \item \textbf{espacio}: Cantidad de espacio en disco utilizado en GB.
+    \end{itemize}
+    \item \textbf{EntradaSalida:} Tabla para almacenar información sobre las operaciones de entrada/salida (E/S).
+    \begin{itemize}
+        \item \textbf{timestamp}: Marca de tiempo de la medición.
+        \item \textbf{operaciones}: Número de operaciones de E/S por segundo.
+    \end{itemize}
+    \item \textbf{Procesos:} Tabla para almacenar información sobre los procesos en ejecución.
+    \begin{itemize}
+        \item \textbf{pid}: Identificador del proceso.
+        \item \textbf{cpu\_percent}: Porcentaje de uso de la CPU por el proceso.
+        \item \textbf{memory\_percent}: Porcentaje de uso de la memoria RAM por el proceso.
+        \item \textbf{vsz}: Tamaño virtual del proceso en KB.
+        \item \textbf{rss}: Tamaño residente del proceso en KB.
+        \item \textbf{usuario}: Usuario que ejecuta el proceso.
+        \item \textbf{nombre}: Nombre del proceso.
+        \item \textbf{ruta}: Ruta del ejecutable del proceso.
+        \item \textbf{hilos}: Número de hilos del proceso.
+        \item \textbf{estado}: Estado del proceso (ej. "ejecutando", "dormido").
+    \end{itemize}
+    \item \textbf{Num\_procesos:} Tabla para almacenar el número total de procesos en ejecución.
+    \begin{itemize}
+        \item \textbf{timestamp}: Marca de tiempo de la medición.
+        \item \textbf{operaciones}: Número total de procesos.
+    \end{itemize}
+    \item \textbf{Red:} Tabla para almacenar información sobre el tráfico de red.
+    \begin{itemize}
+        \item \textbf{timestamp}: Marca de tiempo de la medición.
+        \item \textbf{bytes\_enviados}: Número de bytes enviados.
+        \item \textbf{bytes\_recibidos}: Número de bytes recibidos.
+        \item \textbf{conexiones\_activas}: Número de conexiones activas.
+        \item \textbf{paquetes\_enviados}: Número de paquetes enviados.
+        \item \textbf{paquetes\_recibidos}: Número de paquetes recibidos.
+    \end{itemize}
+    \item \textbf{Interfaces:} Tabla para almacenar información sobre las interfaces de red.
+    \begin{itemize}
+        \item \textbf{nombre}: Nombre de la interfaz.
+        \item \textbf{direccion}: Dirección IP de la interfaz.
+        \item \textbf{mac}: Dirección MAC de la interfaz.
+        \item \textbf{broadcast}: Dirección de broadcast de la interfaz.
+        \item \textbf{bytes\_enviados}: Número de bytes enviados por la interfaz.
+        \item \textbf{bytes\_recibidos}: Número de bytes recibidos por la interfaz.
+    \end{itemize}
+    \item \textbf{Tiempo\_activo:} Tabla para almacenar el tiempo de actividad del servidor.
+    \begin{itemize}
+        \item \textbf{timestamp}: Marca de tiempo de la medición.
+        \item \textbf{dias}: Número de días de actividad.
+        \item \textbf{horas}: Número de horas de actividad.
+        \item \textbf{minutos}: Número de minutos de actividad.
+        \item \textbf{segundos}: Número de segundos de actividad.
+    \end{itemize}
+    \item \textbf{Sistema:} Tabla para almacenar información sobre la carga del sistema.
+    \begin{itemize}
+        \item \textbf{timestamp}: Marca de tiempo de la medición.
+        \item \textbf{carga1}: Carga promedio del sistema en el último minuto.
+        \item \textbf{carga5}: Carga promedio del sistema en los últimos 5 minutos.
+        \item \textbf{carag15}: Carga promedio del sistema en los últimos 15 minutos.
+        \item \textbf{nucleos\_log}: Número de núcleos lógicos de la CPU.
+    \end{itemize}
+\end{enumerate}
 
 \subsection{Conexión a la base de datos}\label{subsec:conexión-db}
 Este código define una conexión con la base de datos \textbf{MySQL} en Ubuntu. El script está desarrollado en Python y maneja tanto la conexión con la base de datos como su cierre.
@@ -179,7 +265,44 @@ Las tablas de la base de datos tiene en común que su clave primaria es el 'time
 Más allá de la clave primaria, en cada tabla se recogen distintos tipos de datos según lo que se quiere recopilar, como datos de tipo INT, FLOAT, VARCHAR(255), que todos estos tienen la peculiaridad de que no pueden ser un valor nulo.\\
 
 \newpage
-FALTA EXPLICAR EL PROCEDIMIENTO Y LO SIGUIENTE, QUE NO SE COMO EXPLICARLO BIEN
+Además, en este script se define el procedimiento 'AddDatos', cuya declaración es la siguiente: \\
+\begin{lstlisting}[style=sqlProcedure]
+
+CREATE PROCEDURE `AddDatos` (
+    IN `carga_cpu` FLOAT,
+    IN `frecuencia_cpu` FLOAT,
+    IN `mem_ram` FLOAT,
+    IN `mem_swap` FLOAT,
+    IN `espacio_disco` FLOAT,
+    IN `io_operaciones` INT,
+    IN `num_proc` INT,
+    IN `bytes_env` INT,
+    IN `bytes_rec` INT,
+    IN `conexiones` INT,
+    IN `paq_env` INT,
+    IN `paq_rec` INT,
+    IN `d` INT,
+    IN `h` INT,
+    IN `m` INT,
+    IN `s` INT,
+    IN `carga_sis_1` FLOAT,
+    IN `carga_sis_5` FLOAT,
+    IN `carga_sis_15` FLOAT,
+    IN `nucleos_log` INT
+)
+\end{lstlisting}
+
+El procedimiento acepta varios parámetros de entrada (IN) que representan los datos de rendimiento del servidor (excepto los valores correspondientes a las tablas interfaces y procesos).\\
+
+Una vez recibidos estos parámetros, 'AddDatos' calcula la marca de tiempo actual que registrará en qué momento se han recopilado los datos. Además, define un manejador de errores que se activa si ocurre alguna excepción SQL durante la ejecución del procedimiento.\\
+
+Posteriormente, comienza una transacción para asegurar que todas las operaciones de inserción se realicen con éxito o se reviertan en caso de error.\\
+
+Comenzada la transacción, el procedimiento introduce los datos que ha recibido como parámetros en las tablas correspondientes (excepto en las tablas interfaces y procesos). También, antes de introducir los nuevos datos, borra los datos de las tablas  \textbf{CPU, Disco, Num\_procesos, Tiempo\_activo y Sistema} que estaban registrados anteriormente.\\
+
+Finalmente, Si todas las operaciones se realizan con éxito, confirma la transacción (COMMIT), guardando los cambios en la base de datos.
+
+
 \newpage
 
 \section{Servicio de Ubuntu}\label{sec:servicio-ubuntu}
