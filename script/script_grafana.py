@@ -8,6 +8,22 @@ from conexion_sql import get_connection, close_connection
 from datos_sistema import DatosSistema
 
 def interfaces_values():
+    """
+    Obtiene información detallada sobre las interfaces de red del sistema.
+
+    return:
+        - list: Lista de diccionarios con la información de cada interfaz de red, 
+          donde cada diccionario contiene los siguientes campos:
+
+            - nombre (str): Nombre de la interfaz de red.
+            - direccion (str | None): Dirección IPv4 asignada a la interfaz (o `None` si no tiene).
+            - mascara (str | None): Máscara de subred de la interfaz (o `None` si no tiene).
+            - mac (str | None): Dirección MAC de la interfaz (o `None` si no tiene).
+            - broadcast (str | None): Dirección de broadcast de la interfaz (o `None` si no tiene).
+            - bytes_enviados (int): Número total de bytes enviados a través de la interfaz.
+            - bytes_recibidos (int): Número total de bytes recibidos a través de la interfaz.
+    """
+    
     interfaces_info = []
     for nombre_interfaz, interface_addreses in psutil.net_if_addrs().items():
             direccion_mac = None
@@ -41,35 +57,48 @@ def interfaces_values():
     return interfaces_info
 
 def collect_data(boot_time):
-
     """
-    Recolecta los datos del sistema y los almacena en un objeto DatosSistema.
-    parameters: No recibe parámetros.
+    Recolecta los datos del sistema y los almacena en un objeto `DatosSistema`.
 
-    return: Devuelve un objeto `DatosSistema` con los siguientes atributos:
+    parameters:
+        - boot_time (float): Tiempo de arranque del sistema en segundos.
 
-        - carga_cpu: porcentaje de carga de la CPU.
-
-        - frecuencia_cpu: frecuencia actual de la CPU.
-
-        - mem_ram: porcentaje de uso de la memoria RAM.
-
-        - mem_swap: porcentaje de uso de la memoria swap.
-
-        - espacio_disco: porcentaje de uso del disco.
-
-        - io_operaciones: número de operaciones de lectura en disco.
-
-        - proc_detail: lista con detalles de los procesos en ejecución.
-
-        - num_proc: número total de procesos en ejecución.
-        - bytes_env: cantidad de bytes enviados por la red.
-        - bytes_rec: cantidad de bytes recibidos por la red.
-        - conexiones: número de conexiones de red activas.
-        - paq_env: número de paquetes enviados.
-        - paq_rec: número de paquetes recibidos.
-        - dias, horas, minutos, segundos: tiempo desde el arranque del sistema.
-        - carga_sis_1, carga_sis_5, carga_sis_15: carga del sistema en 1, 5, 15 minutos.
+    return:
+        - DatosSistema: Objeto con los siguientes atributos:
+        
+            - carga_cpu (float): Porcentaje de carga de la CPU.
+            - frecuencia_cpu (float): Frecuencia actual de la CPU en MHz.
+            - mem_ram (float): Porcentaje de uso de la memoria RAM.
+            - mem_swap (float): Porcentaje de uso de la memoria swap.
+            - espacio_disco (float): Porcentaje de uso del disco en la raíz (`/`).
+            - io_operaciones (int): Número de operaciones de lectura en disco.
+            - proc_detail (list): Lista de diccionarios con detalles de los procesos en ejecución, 
+              incluyendo:
+                - pid (int): Identificador del proceso.
+                - name (str): Nombre del proceso.
+                - exe (str): Ruta del ejecutable del proceso.
+                - status (str): Estado actual del proceso.
+                - username (str): Usuario propietario del proceso.
+                - cpu_percent (float): Porcentaje de uso de CPU del proceso.
+                - memory_percent (float): Porcentaje de uso de memoria del proceso.
+                - vsz (int): Tamaño virtual del proceso en bytes.
+                - rss (int): Tamaño de la memoria residente del proceso en bytes.
+                - num_thread (int): Número de hilos del proceso.
+            - num_proc (int): Número total de procesos en ejecución.
+            - bytes_env (int): Cantidad de bytes enviados por la red.
+            - bytes_rec (int): Cantidad de bytes recibidos por la red.
+            - conexiones (int): Número de conexiones de red activas.
+            - paq_env (int): Número de paquetes enviados por la red.
+            - paq_rec (int): Número de paquetes recibidos por la red.
+            - interfaces_detail (dict): Información detallada de las interfaces de red.
+            - dias (int): Días transcurridos desde el arranque del sistema.
+            - horas (int): Horas transcurridas desde el arranque del sistema.
+            - minutos (int): Minutos transcurridos desde el arranque del sistema.
+            - segundos (int): Segundos transcurridos desde el arranque del sistema.
+            - carga_sis_1 (float): Carga promedio del sistema en el último minuto.
+            - carga_sis_5 (float): Carga promedio del sistema en los últimos 5 minutos.
+            - carga_sis_15 (float): Carga promedio del sistema en los últimos 15 minutos.
+            - nucleos_log (int): Número de núcleos lógicos de la CPU.
     """
 
     # Obtener detalles de los procesos

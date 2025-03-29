@@ -11,7 +11,6 @@ DROP TABLE IF EXISTS interfaces;
 DROP TABLE IF EXISTS puertos_abiertos;
 DROP TABLE IF EXISTS tiempo_activo;
 DROP TABLE IF EXISTS sistema;
--- DROP TABLE IF EXISTS temperatura;
 
 
 DROP PROCEDURE IF EXISTS AddDatos;
@@ -47,7 +46,7 @@ CREATE TABLE num_procesos(
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     numero INT NOT NULL,
     PRIMARY KEY(timestamp)
-); --esta tabla se puede quitar se puede hacer un count de procesos
+); 
 
 CREATE TABLE procesos (
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -102,6 +101,7 @@ CREATE TABLE sistema (
     PRIMARY KEY(timestamp)
 );
 
+--Comienzo del procedimiento de insercion de datos
 DELIMITER //
 
 CREATE PROCEDURE `AddDatos` (
@@ -139,7 +139,7 @@ BEGIN
 
     START TRANSACTION; -- Empezar una transacción
 
-    DELETE FROM cpu;
+    DELETE FROM cpu; --Se borran datos de la cpu, disco, num_procesos, tiempo_activo, sistema ya que solo ineteresa conocer los últimos datos obtenidos
 
     INSERT INTO cpu (timestamp, carga, frecuencia) VALUES (ts, carga_cpu, frecuencia_cpu);
 

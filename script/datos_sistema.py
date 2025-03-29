@@ -48,12 +48,13 @@ class DatosSistema:
         self.conexiones = conexiones
         self.paq_env = paq_env
         self.paq_rec = paq_rec
-
         self.dias = dias
         self.horas = horas
         self.minutos = minutos
         self.segundos = segundos
-        self.interfaces_detail = interfaces_detail
+
+        self.interfaces_detail = interfaces_detail #Lista de detalles de las diferentes interfaces de red 
+
         self.carga_sis_1 = carga_sis_1
         self.carga_sis_5 = carga_sis_5
         self.carga_sis_15 = carga_sis_15

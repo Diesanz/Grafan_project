@@ -68,7 +68,7 @@
 \listoftables % Componer y mostrar el índice de figuras
 \newpage
 
-\section{¿Qué es Grafana?}
+\section{¿Qué es Grafana?} \cite{grafana_ausum} \cite{grafana_video}
 
 \textbf{Grafana} es un software de código abierto que permite consultar, visualizar, alertar y comprender datos en tiempo real sin importar dónde estén almacenados mostrados a través de paneles elegantes y flexibles.\\
 
@@ -125,7 +125,7 @@ A continuación se muestra el diagrama que ilustra la estructura de la base de d
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\linewidth]{DiagramaDB.png}
+    \includegraphics[width=0.65\linewidth]{DiagramaDB.png}
     \caption{Diagrama de la Base de Datos}
     \label{fig:diagrama-DB}
 \end{figure}
@@ -204,9 +204,59 @@ Para una mejor comprensión del esquema, se proporciona a continuación una brev
         \item \textbf{timestamp}: Marca de tiempo de la medición.
         \item \textbf{carga1}: Carga promedio del sistema en el último minuto.
         \item \textbf{carga5}: Carga promedio del sistema en los últimos 5 minutos.
-        \item \textbf{carag15}: Carga promedio del sistema en los últimos 15 minutos.
+        \item \textbf{carga15}: Carga promedio del sistema en los últimos 15 minutos.
         \item \textbf{nucleos\_log}: Número de núcleos lógicos de la CPU.
     \end{itemize}
+\end{enumerate}
+
+
+\subsection{Iniciar y creación de la base de datos en el servidor}
+
+Para \textbf{iniciar} la base de datos en el servidor es necesario acceder como root con el comando \lstinline{sudo -i}. A continuación ejecutamos los siguientes comandos:
+
+\begin{enumerate}
+    \item \textbf{Acceso a MySQL como root sin hacer sudo -i:}
+    \begin{itemize}
+        \item Ejecutar el comando \lstinline{sudo mysql -u root -p} en la terminal.
+    \end{itemize}
+
+    \item \textbf{Creación del usuario 'grafanareader':}
+    \begin{itemize}
+        \item Ejecutar el comando: \lstinline{CREATE USER 'grafanareader'@'localhost' IDENTIFIED BY 'Grupo6esi';}
+        \item Este comando crea un nuevo usuario llamado 'grafanareader' que solo puede conectarse desde el mismo servidor ('localhost') y le asigna la contraseña 'Grupo6esi'.
+    \end{itemize}
+
+    \item \textbf{Creación de la base de datos 'grafana':}
+    \begin{itemize}
+        \item Ejecutar el comando: \lstinline{CREATE DATABASE grafana;}
+        \item Este comando crea una nueva base de datos llamada 'grafana'.
+    \end{itemize}
+
+    \item \textbf{Selección de la base de datos 'grafana':}
+    \begin{itemize}
+        \item Ejecutar el comando: \lstinline{USE grafana;}
+        \item Este comando selecciona la base de datos 'grafana' para que todas las operaciones posteriores se realicen en ella.
+    \end{itemize}
+
+    \item \textbf{Ejecución del script SQL para crear las tablas:}
+    \begin{itemize}
+        \item Ejecutar el comando: \lstinline{source /home/usuario/esi/db/tablasGrafana.sql;}
+        \item Este comando ejecuta el archivo SQL especificado, que contiene las instrucciones para crear las tablas necesarias en la base de datos 'grafana'.
+        \item Es importante que el archivo \texttt{tablasGrafana.sql} exista en la ruta especificada.
+    \end{itemize}
+
+    \item \textbf{Otorgar privilegios al usuario 'grafanareader':}
+    \begin{itemize}
+        \item Ejecutar el comando: \lstinline{GRANT ALL PRIVILEGIES ON grafana.* TO 'grafanareader'@'localhost';}
+        \item Este comando otorga al usuario 'grafanareader' permisos totales sobre todas las tablas de la base de datos, ya que se va a querer leer y insertar datos con este usuario.
+    \end{itemize}
+
+    \item \textbf{Actualizar los privilegios:}
+    \begin{itemize}
+        \item Ejecutar el comando: \lstinline{FLUSH PRIVILEGES;}
+        \item Este comando recarga los privilegios de MySQL para que los cambios surtan efecto inmediatamente.
+    \end{itemize}
+
 \end{enumerate}
 
 \subsection{Conexión a la base de datos}\label{subsec:conexión-db}
@@ -242,16 +292,6 @@ Explicación:
 \begin{itemize}
     \item \textbf{get\_connection()}: Establece una conexión con la base de datos MySQL. Para ello, se deben especificar el \textit{host, puerto, nombre de la base de datos, usuario y contraseña}. Retorna un objeto de conexión \textbf{pymysql.connections.Connection} si la conexión es exitosa; en caso contrario, retorna \textbf{None}.
     \item \textbf{close\_connection()}: Cierra una conexión existente con la base de datos. Requiere como parámetro un objeto de conexión \textbf{pymysql.connections.Connection} que será cerrado.
-\end{itemize}
-
-\subsection{Iniciar la base de datos en el servidor}
-
-Para \textbf{iniciar} la base de datos en el servidor es necesario acceder como root con el comando \lstinline{sudo -i}. A continuación ejecutamos los siguientes comandos:
-
-\begin{itemize}
-    \item \lstinline{mysql} $ \rightarrow $ abre el cliente de línea de comandos de MySQL, permitiendo interactuar con la base de datos.
-    \item \lstinline{use grafana} $ \rightarrow $ selecciona la base de datos llamada 'grafana' para que todas las operaciones posteriores se ejecuten sobre ella.
-    \item \lstinline{source /home/usuario/esi/db/tablasGrafana.sql;} $ \rightarrow $ ejecuta el archivo SQL que contiene las instrucciones para crear las tablas y almacenar datos en la base de datos 'grafana'.
 \end{itemize}
 
 \subsection{Script de creación de tablas}
@@ -341,7 +381,7 @@ Explicación:
     \item \textbf{[Install]} $ \rightarrow $ indica que el servicio debe ejecutarse en el nivel \textit{multi-user.target}.
 \end{itemize}
 
-\section{Explicación del código}
+\section{Explicación del código} \cite{programacionpython80889555} \cite{psutil}
 En esta sección se explica el código correspondiente al script \textbf{script\_grafana.py}, que es el encargado de recolectar los datos y almacenarlos en la base de datos.
 \subsection{Bucle while del servicio}\label{subsec:bucle-while}
 
@@ -379,7 +419,7 @@ Explicación:
     \item \textbf{Comprobación de conexión}: Se verifica si la conexión fue exitosa.
     \item \textbf{Bucle while}: Este es un bucle infinito que estará activo mientras el servicio siga en ejecución. Dentro de este bucle:
     \begin{itemize}
-        \item Se recopilan datos utilizando el método \textbf{collect-data()}.
+        \item Se recopilan datos utilizando el método \textbf{collect-data()}, que se explica más adelante en la sección~\ref{subsec:recolección-datos}.
         \item Se insertan los datos recogidos en la base de datos con el método \textbf{insert\_data()}, que se explica más adelante en la sección ~\ref{subsec:almacenamiento-datos}.
         \item Se espera 5 segundos antes de repetir el proceso.
     \end{itemize}
@@ -399,7 +439,8 @@ A continuación se hará un listado de las métricas recogidas con la librería 
     \item Uso de memoria RAM y memoria SWAP $ \rightarrow $ \lstinline{psutil.virtual_memory().percent} y \lstinline{swap_memory().percent}
     \item Espacio en disco $ \rightarrow $ \lstinline{psutil.disk_usage('/').percent}
     \item Operaciones de E/S $ \rightarrow $ \lstinline{psutil.disk_io_counters().read_count}
-    \item Número de bytes enviados y recibidos  $ \rightarrow $ \lstinline{psutil.net_io_counters().bytes_sent} y \lstinline{psutil.net_io_counters().bytes_recv}
+    \item Número de bytes enviados y recibidos  $ \rightarrow $ \lstinline{psutil.net_io_counters().packets_sent} y \lstinline{psutil.net_io_counters().packets_recv}
+    \item Número de paquetes enviados y recibidos  $ \rightarrow $ \lstinline{psutil.net_io_counters().bytes_sent} y \lstinline{psutil.net_io_counters().bytes_recv}
     \item Número de conexiones de red activas si las hubiera  $ \rightarrow $ \lstinline{len(psutil.net_connections(kind='inet'))}
     \item Información detallada de los procesos en ejecución  $ \rightarrow $ para ello se creó una clase que recopilaba todos los detalles de los procesos:
     \begin{lstlisting}[language=python]
@@ -421,7 +462,7 @@ A continuación se hará un listado de las métricas recogidas con la librería 
     ]
     \end{lstlisting}
     \item Momento en el que se arrancó el servidor $ \rightarrow $ \lstinline{psutil.boot_time()}
-    \item Información detallada de las interfaces de red $ \rightarrow $ para ello se creó una clase que recopilaba todos los detalles de las distintas interfaces de red:
+    \item Información detallada de las interfaces de red $ \rightarrow $ para ello se creó una función que recopilaba todos los detalles de las distintas interfaces de red:
     \begin{lstlisting}[language=python]
 interfaces_info = []
     for nombre_interfaz, interface_addreses in psutil.net_if_addrs().items():
@@ -495,28 +536,44 @@ def insert_data(data: DatosSistema, conn):
             conn.rollback()  # Si ocurre un error, revertir la transacción
             print(f"Error al insertar datos: {e}")
 \end{lstlisting}
-\textbf{'insert\_data()'} recibe por parámetros lo siguiente:
+Explicación:
 \begin{itemize}
-\item \textbf{'data'}: Un objeto `DatosSistema` que contiene los datos recolectados del sistema. DatosSistema se define en la clase \textbf{datos\_sistema.py}, cuya cabecera es la siguiente:  
-\begin{lstlisting}[language=python]
-class DatosSistema:
-    def __init__(self, carga_cpu, frecuencia_cpu, mem_ram, mem_swap,
-                 espacio_disco, io_operaciones, proc_detail, num_proc,
-                 bytes_env, bytes_rec, conexiones, paq_env, paq_rec, dias, horas, minutos, segundos,interfaces_detail,
-                 carga_sis_1, carga_sis_5, carga_sis_15, nucleos_log):
-\end{lstlisting}
-\item \textbf{'conn'}: Conexión a la base de datos MySQL.
+    \item \textbf{insert\_data()} recibe por parámetros lo siguiente:
+    \begin{itemize}
+    \item \textbf{data}: Un objeto `DatosSistema` que contiene los datos recolectados del sistema. DatosSistema se define en la clase \textbf{datos\_sistema.py}, cuya cabecera es la siguiente:  
+    \begin{lstlisting}[language=python]
+    class DatosSistema:
+        def __init__(self, carga_cpu, frecuencia_cpu, mem_ram, mem_swap,
+                     espacio_disco, io_operaciones, proc_detail, num_proc,
+                     bytes_env, bytes_rec, conexiones, paq_env, paq_rec, dias, horas, minutos, segundos,interfaces_detail,
+                     carga_sis_1, carga_sis_5, carga_sis_15, nucleos_log):
+    \end{lstlisting}
+    \item \textbf{conn}: Conexión a la base de datos MySQL.
+    \end{itemize}
+    \item Esta función sigue los siguientes pasos:
+    \begin{enumerate}
+        \item Verifica si la conexión a la base de datos `\textbf{conn}` está activa.
+        \item Inicia una transacción con `\textbf{conn.begin()}`.
+        \item Elimina los datos antiguos de la tabla `Procesos` y los reemplaza con los nuevos datos obtenidos de `\textbf{data.to\_tuple\_proc\_info()}`. Este método devuelve una \textbf{lista de tuplas}, donde cada tupla contiene los detalles de un proceso, resultando más fácil la inserción de estos datos en la base de datos.
+        \item Borra los registros previos de la tabla `Interfaces` y los actualiza con `\textbf{data.to\_tuple\_interfaces\_detail()}`. Al igual que el método anterior, devuelve una \textbf{lista de tuplas}, donde cada tupla contiene los detalles de una interfaz.
+        \item Llama al procedimiento almacenado \textbf{`AddDatos`} para insertar el resto de datos del sistema sistema.
+        \item Confirma la transacción con `\textbf{conn.commit()}`. Si hay algún error, revierte la transacción con `\textbf{conn.rollback()}`.
+    \end{enumerate}
 \end{itemize}
-Esta función sigue los siguientes pasos:
+
+
+\section{Visualización Grafana} \cite{grafana_mysql_docs} \cite{newsmatic_big_data}
+Antes de crear las tablas y gráficas en un Dashboard de Grafana, es necesario establecer la conexión con la base de datos \textbf{grafana}. Para ello, sigue estos pasos:
+
 \begin{enumerate}
-    \item Verifica si la conexión a la base de datos `\textbf{conn}` está activa.
-    \item Inicia una transacción con `\textbf{conn.begin()}`.
-    \item Elimina los datos antiguos de la tabla `Procesos` y los reemplaza con los nuevos datos obtenidos de `\textbf{data.to\_tuple\_proc\_info()}`. Este método devuelve una \textbf{lista de tuplas}, donde cada tupla contiene los detalles de un proceso, resultando más fácil la inserción de estos datos en la base de datos.
-    \item Borra los registros previos de la tabla `Interfaces` y los actualiza con `\textbf{data.to\_tuple\_interfaces\_detail()}`. Al igual que el método anterior, devuelve una \textbf{lista de tuplas}, donde cada tupla contiene los detalles de una interfaz.
-    \item Llama al procedimiento almacenado \textbf{`AddDatos`} para insertar el resto de datos del sistema sistema.
-    \item Confirma la transacción con `\textbf{conn.commit()}`. Si hay algún error, revierte la transacción con `\textbf{conn.rollback()}`.
+    \item Ir a la sección \textbf{Connections}.
+    \item Seleccionar \textbf{MySQL}.
+    \item Hacer clic en \textbf{Add new data source}.
+    \item Introducir los datos de la base de datos y las credenciales del usuario de la base de datos.
+    \item Configurar la \textbf{Session TimeZone} a "0:00".
 \end{enumerate}
-\section{Visualización Grafana}
+
+Una vez establecida la conexión, hay que crear un nuevo Dashboard y configúrarlo para que actualice los datos cada 5 segundos, coincidiendo con la frecuencia de inserción de datos de los scripts en la base de datos, además se establece para obtener solo los datos de los últimos 5 minutos.
 
 \subsection{Carga de CPU}
 
@@ -852,9 +909,15 @@ Esta consulta muestra la siguiente información de las interfaces de red:
 
 \subsection{Carga del sistema}
 
-La carga del sistema se muestra en Grafana en un panel de tipo ''Gauge'', ya que este panel es perfecto para visualizar el valor inmediato de la carga y una semicircunferencia indicando el estado de la carga.\\
+La carga del sistema se muestra en Grafana mediante un panel de tipo \textit{Gauge}, ya que este tipo de panel es ideal para visualizar el valor instantáneo de la carga, acompañado de una semicircunferencia que indica su estado.\\
 
-Nuestro sistema tiene dos núcleos, por lo que el valor que se representa en nuestra semicircunferencia llega hasta cuatro. Si la carga se encuentra entre el 0 y el 2, quiere decir que es una carga normal (verde), si se encuentra entre el 2 y el 3'2, quiere decir que es una carga media (amarillo), y si supera los 3'2 hasta 4, quiere decir que la carga es alta (rojo).\\
+Dado que nuestro sistema cuenta con dos núcleos, el valor máximo representado en la semicircunferencia es 2. La interpretación de la carga es la siguiente:
+
+\begin{itemize}
+    \item \textbf{Carga normal (verde):} Entre 0 y 1.4 (hasta el 70\% de la capacidad total).
+    \item \textbf{Carga media (amarillo):} Entre 1.4 y 2.
+    \item \textbf{Carga alta (rojo):} Igual o superior a 2.
+\end{itemize}
 
 La consulta SQL que se ha utilizado es:
 
@@ -872,7 +935,115 @@ Esta consulta muestra el valor inmediato de la carga del sistema en 1, 5 y 15 mi
     \label{fig:enter-label}
 \end{figure}
 
-\section{Distribución de trabajo y organización}
+\section{Distribución de Trabajo y Organización}
+
+El desarrollo del proyecto se dividió en dos partes principales:
+
+\begin{enumerate}
+    \item Implementación del código para la recolección de métricas del servidor.
+    \item Elaboración de la documentación del proyecto en \LaTeX{}.
+\end{enumerate}
+
+Cada miembro del equipo asumió responsabilidades específicas para garantizar una distribución equitativa del trabajo y la eficiencia del proyecto.
+
+\subsection{Distribución de Tareas}
+
+\subsubsection{Diego Sanz - Recolección de Datos del Sistema}
+
+\begin{itemize}
+    \item \textbf{Implementación de Métricas y Funciones:}
+    \begin{itemize}
+        \item Recolección de la métrica de carga instantánea de CPU: \texttt{psutil.cpu\_percent(interval=1)}.
+        \item Recolección de la métrica de frecuencia instantánea de CPU: \texttt{psutil.cpu\_freq().current}.
+        \item Recolección de información detallada de los procesos del sistema.
+        \item Recolección de la métrica de espacio en disco utilizado: \texttt{psutil.disk\_usage('/').percent}.
+        \item Desarrollo del código para la conexión a la base de datos MySQL.
+        \item Creación de la clase \texttt{DatosSistema}.
+        \item Implementación de las funciones \texttt{to\_tuple()} y \texttt{top\_tuple\_proc\_info()} de la clase \texttt{DatosSistema}.
+        \item Creación del bucle \texttt{while()} en el script de Grafana.
+        \item Desarrollo del procedimiento de inserción de datos en la base de datos SQL.
+        \item Desarrollo de tablas y gráficas en Grafana correspondientes a las diferentes métricas de recolección.
+    \end{itemize}
+    \item \textbf{Documentación en \LaTeX{} del:}
+    \begin{itemize}
+        \item Documentación en \LaTeX{} del funcionamiento del código (funciones y clases).
+        \item Creación del script SQL para la creación de tablas en MySQL.
+        \item Diseño de tablas y gráficos en Grafana para la visualización de las métricas recolectadas.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Victor Fernández - Monitorización de Memoria y Almacenamiento}
+
+\begin{itemize}
+    \item \textbf{Implementación de Métricas y Funciones:}
+    \begin{itemize}
+        \item Recolección de la métrica de uso de memoria RAM: \texttt{psutil.virtual\_memory().percent}.
+        \item Recolección de la métrica de uso de memoria SWAP: \texttt{psutil.swap\_memory().percent}.
+        \item Recolección de la métrica de carga del sistema (load average): \texttt{psutil.getloadavg()}.
+        \item Recolección de la métrica de paquetes enviados y recibidos: \texttt{psutil.net\_io\_counters().packets\_sent}
+        \item Creación de la clase \texttt{DatosSistema}.
+        \item Inicio de la implementación de la función \texttt{insert\_data()} en el script de Grafana.
+        \item Desarrollo de tablas y gráficas en Grafana correspondientes a las diferentes métricas de recolección.
+    \end{itemize}
+    \item \textbf{Documentación en \LaTeX{} del:}
+    \begin{itemize}
+        \item Funcionamiento del código (funciones y clases).
+        \item Explicación de la instalación de Grafana y la creación del servicio en Ubuntu.
+        \item Diseño de tablas y gráficos en Grafana para la visualización de las métricas recolectadas.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Ruben Verduras - Red y Conexiones Activas}
+
+\begin{itemize}
+    \item \textbf{Implementación de Métricas y Funciones:}
+    \begin{itemize}
+        \item Recolección de la métrica de bytes enviados: \texttt{psutil.net\_io\_counters().bytes\_sent}.
+        \item Recolección de la métrica de bytes recibidos: \texttt{psutil.net\_io\_counters().bytes\_recv}.
+        \item Recolección de información detallada de las interfaces de red.
+        \item Recolección de la métrica de operaciones de E/S de disco: \texttt{psutil.disk\_io\_counters().read\_count}.
+        \item Implementación de la función \texttt{interfaces\_values()} en el script de Grafana.
+        \item Implementación de la función \texttt{to\_tuple\_interfaces\_detail()}.
+        \item Desarrollo de tablas y gráficas en Grafana correspondientes a las diferentes métricas de recolección.
+    \end{itemize}
+    \item \textbf{Documentación en \LaTeX{} del:}
+    \begin{itemize}
+        \item Funcionamiento del código (funciones y clases).
+        \item Explicación del diagrama y estructura de la base de datos.
+        \item Documentación de la conexión a la base de datos.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Gonzalo Sánchez - Procesos y Documentación en \LaTeX{}}
+
+\begin{itemize}
+    \item \textbf{Implementación de Métricas:}
+    \begin{itemize}
+        \item Recolección de la métrica de tiempo de arranque del servidor: \texttt{psutil.boot\_time()}.
+        \item Recolección de la métrica de conteo de conexiones de red activas: \texttt{len(psutil.net\_connections(kind='inet'))}.
+        \item Recolección del número total de hilos del sistema.
+        \item Desarrollo de tablas y gráficas en Grafana correspondientes a las diferentes métricas de recolección.
+    \end{itemize}
+    \item \textbf{Documentación en \LaTeX{} de:}
+    \begin{itemize}
+        \item Redacción de la introducción y conclusiones en \LaTeX{}.
+        \item Redacción de la bibliografía en \LaTeX{}.
+    \end{itemize}
+\end{itemize}
+
+\vspace{1em}
+\noindent Todos los miembros del equipo colaboraron en la implementación de la función \texttt{insert\_data()} del script de Grafana, la creación de las tablas SQL y la revisión del código y la documentación para asegurar la coherencia y calidad del proyecto.
+
+\section{Conclusión}
+En este proyecto, hemos desarrollado un servicio de monitorización de servidores utilizando \texttt{psutil}, MySQL y Grafana. A través de la implementación de diversas métricas y la creación de visualizaciones personalizadas, hemos logrado obtener una visión detallada del rendimiento y estado del servidor.
+
+\begin{itemize}
+    \item La recolección de métricas permite identificar posibles cuellos de botella y optimizar el rendimiento del servidor.
+    \item La integración con MySQL ha facilitado el almacenamiento y la consulta de datos.
+    \item Con Grafana se ha podio demostrado lo facil que sería crear una serie de tablas para la visualización de datos, permitiendo la creación de paneles personalizados.
+\end{itemize}
+
+En resumen, este proyecto ha demostrado la viabilidad y utilidad de utilizar \texttt{psutil}, MySQL y Grafana para la monitorización de servidores.
 
 \section{Bibliografía}
 
