@@ -307,7 +307,7 @@ Posteriormente, comienza una \textbf{transacción} para asegurar que todas las o
 
 Comenzada la transacción, el procedimiento introduce los datos que ha recibido como parámetros en las tablas correspondientes (excepto en las tablas interfaces y procesos). También, antes de introducir los nuevos datos, borra los datos de las tablas  \textbf{CPU, Disco, Num\_procesos, Tiempo\_activo y Sistema} que estaban registrados anteriormente.\\
 
-Finalmente, Si todas las operaciones se realizan con éxito, confirma la transacción (COMMIT), guardando los cambios en la base de datos.
+Finalmente, si todas las operaciones se realizan con éxito, se confirma la transacción (COMMIT), guardando los cambios en la base de datos.
 
 \section{Servicio de Ubuntu}\label{sec:servicio-ubuntu}
 Este código define un servicio de \textbf{systemd} de Ubuntu, que ejecuta un script desarrollado en python3 dedicado a la recolección de datos del servidor y enviarlos a Grafana. El servicio depende de MySQL y se reinicia automáticamente si falla.
@@ -342,6 +342,7 @@ Explicación:
 \end{itemize}
 
 \section{Explicación del código}
+En esta sección se explica el código correspondiente al script \textbf{script\_grafana.py}, que es el encargado de recolectar los datos y almacenarlos en la base de datos.
 \subsection{Bucle while del servicio}\label{subsec:bucle-while}
 
 \begin{lstlisting}[language=python]
@@ -379,11 +380,11 @@ Explicación:
     \item \textbf{Bucle while}: Este es un bucle infinito que estará activo mientras el servicio siga en ejecución. Dentro de este bucle:
     \begin{itemize}
         \item Se recopilan datos utilizando el método \textbf{collect-data()}.
-        \item Se insertan los datos recogidos en la base de datos con el método \textbf{insert\_data()}, que se explica más adelante en la sección.
+        \item Se insertan los datos recogidos en la base de datos con el método \textbf{insert\_data()}, que se explica más adelante en la sección ~\ref{subsec:almacenamiento-datos}.
         \item Se espera 5 segundos antes de repetir el proceso.
     \end{itemize}
     \item \textbf{Manejo de errores}: Captura posibles errores de conexión con la base de datos.
-    \item \textbf{Cierre de conexión}: Se cierra la conexión, si existe, dentro del bloque \texttt{finally} para evitar posibles fugas de recursos mediante el método \textbf{close\_connection(conn)}, que se explica más adelante en la sección.
+    \item \textbf{Cierre de conexión}: Se cierra la conexión, si existe, dentro del bloque \texttt{finally} para evitar posibles fugas de recursos mediante el método \textbf{close\_connection(conn)}.
 \end{itemize}
 
 \subsection{Recolección de datos}\label{subsec:recolección-datos}
@@ -456,7 +457,65 @@ interfaces_info = []
 \end{enumerate}
 
 \subsection{Almacenamiento de datos}\label{subsec:almacenamiento-datos}
+Para el almacenamiento de datos se ha utilizado la función \textbf{insert\_data}, que se encarga de insertar los datos en las tablas una vez han sido recogidos. El código de esta función es el siguiente:
+\begin{lstlisting}[language=python]
+def insert_data(data: DatosSistema, conn):
+    
+    if conn:
+        try:
+            cursor = conn.cursor()
 
+            # Inicia una transacción
+            conn.begin()
+
+            # Eliminar procesos anteriores
+            cursor.execute("DELETE FROM procesos;")
+
+            # Insertar los detalles de los procesos
+            #Esto se realiza debido a que hay que insertar varios procesos en la tabla
+            cursor.executemany("""INSERT INTO procesos (pid, cpu_percent, memory_percent, vsz, rss, usuario, nombre, ruta, hilos, estado)
+                                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""", data.to_tuple_proc_info())  # `data.to_tuple_proc_info()` devuelve los detalles de los procesos
+
+            # Borrar los detalles anteriores de las interfaces
+            cursor.execute("DELETE FROM interfaces;")
+
+            # Insertar los detalles de las interfaces de red.
+            cursor.executemany("""INSERT INTO interfaces (nombre, direccion, mascara, mac, broadcast, bytes_enviados, bytes_recibidos)
+                               VALUES (%s, %s, %s, %s, %s, %s, %s)""", data.to_tuple_interfaces_detail())
+
+            # Llamar al procedimiento almacenado para insertar los otros datos del sistema
+            cursor.callproc("AddDatos", data.to_tuple())  # `data.to_tuple()` devuelve los otros datos en formato adecuado para el procedimiento
+
+            # Confirmar la transacción
+            conn.commit()
+
+            cursor.close()
+            print("Datos insertados correctamente en la BD.")
+        except Error as e:
+            conn.rollback()  # Si ocurre un error, revertir la transacción
+            print(f"Error al insertar datos: {e}")
+\end{lstlisting}
+\textbf{'insert\_data()'} recibe por parámetros lo siguiente:
+\begin{itemize}
+\item \textbf{'data'}: Un objeto `DatosSistema` que contiene los datos recolectados del sistema. DatosSistema se define en la clase \textbf{datos\_sistema.py}, cuya cabecera es la siguiente:  
+\begin{lstlisting}[language=python]
+class DatosSistema:
+    def __init__(self, carga_cpu, frecuencia_cpu, mem_ram, mem_swap,
+                 espacio_disco, io_operaciones, proc_detail, num_proc,
+                 bytes_env, bytes_rec, conexiones, paq_env, paq_rec, dias, horas, minutos, segundos,interfaces_detail,
+                 carga_sis_1, carga_sis_5, carga_sis_15, nucleos_log):
+\end{lstlisting}
+\item \textbf{'conn'}: Conexión a la base de datos MySQL.
+\end{itemize}
+Esta función sigue los siguientes pasos:
+\begin{enumerate}
+    \item Verifica si la conexión a la base de datos `\textbf{conn}` está activa.
+    \item Inicia una transacción con `\textbf{conn.begin()}`.
+    \item Elimina los datos antiguos de la tabla `Procesos` y los reemplaza con los nuevos datos obtenidos de `\textbf{data.to\_tuple\_proc\_info()}`. Este método devuelve una \textbf{lista de tuplas}, donde cada tupla contiene los detalles de un proceso, resultando más fácil la inserción de estos datos en la base de datos.
+    \item Borra los registros previos de la tabla `Interfaces` y los actualiza con `\textbf{data.to\_tuple\_interfaces\_detail()}`. Al igual que el método anterior, devuelve una \textbf{lista de tuplas}, donde cada tupla contiene los detalles de una interfaz.
+    \item Llama al procedimiento almacenado \textbf{`AddDatos`} para insertar el resto de datos del sistema sistema.
+    \item Confirma la transacción con `\textbf{conn.commit()}`. Si hay algún error, revierte la transacción con `\textbf{conn.rollback()}`.
+\end{enumerate}
 \section{Visualización Grafana}
 
 \subsection{Carga de CPU}
