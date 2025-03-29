@@ -139,7 +139,7 @@ BEGIN
 
     START TRANSACTION; -- Empezar una transacción
 
-    DELETE FROM cpu; --Se borran datos de la cpu, disco, num_procesos, tiempo_activo, sistema ya que solo ineteresa conocer los últimos datos obtenidos
+    DELETE FROM cpu; -- Se borran datos de la cpu, disco, num_procesos, tiempo_activo, sistema ya que solo ineteresa conocer los ultimos datos obtenidos
 
     INSERT INTO cpu (timestamp, carga, frecuencia) VALUES (ts, carga_cpu, frecuencia_cpu);
 
