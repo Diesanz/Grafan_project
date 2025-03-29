@@ -10,15 +10,18 @@
 \addbibresource{bibliografia.bib}
 \usepackage[a4paper, top=3cm, bottom=3cm, left=3.5cm, right=3.5cm]{geometry}
 
-
-
 \lstset{
     language=bash,
-    basicstyle=\ttfamily\small,  % Tipo de letra monoespaciada
-    keywordstyle=\color{blue},   % Color de palabras clave
-    stringstyle=\color{red},     % Color de strings
-    commentstyle=\color{gray},   % Color de comentarios
-    showstringspaces=false       % No mostrar espacios en strings
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{green!60!black},
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    breaklines=true,
+    captionpos=b,
+    numbers=left,
+    numberstyle=\tiny\color{gray}
 }
 
 \lstdefinelanguage{SQL}{
@@ -32,6 +35,13 @@
     commentstyle=\color{gray}\ttfamily,
     stringstyle=\color{red}\ttfamily,
 }
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} 
+\fancyhead[L]{Práctica 1} 
+\fancyhead[R]{ESI} 
+\fancyfoot[C]{\thepage}
 
 \begin{document}
 
@@ -60,47 +70,48 @@
 
 \section{¿Qué es Grafana?}
 
-Grafana es un software de código abierto que permite consultar, visualizar, alertar y comprender datos en tiempo real sin importar dónde estén almacenados mostrados a través de paneles elegantes y flexibles.
+\textbf{Grafana} es un software de código abierto que permite consultar, visualizar, alertar y comprender datos en tiempo real sin importar dónde estén almacenados mostrados a través de paneles elegantes y flexibles.\\
 
-Las principales características de Grafana son:
+Las principales \textbf{características} de Grafana son:
 
 \begin{itemize}
-    \item Permite crear dashboards altamente interactivos con gráficos y tablas que se pueden personalizar y explirar en tiempo real.
-    \item Admite una amplia variedad de fuentes de datos como bases de datos SQL y NoSQL, sistemas de monitoreo como Prometheus y Graphite y sistemas en la nube como AWS CloudWatch y Google Stackdriver.
-    \item Ofrece una amplia gama de opciones de visualización como gráficos de líneas, barras, dispersión, termómetros y más.
-    \item Aporta la posibilidad de crear alertas basadas en umbrales y condiciones definidas por los usuario capaces de notificar a través de correo electrónico u otros canales de comunicación.
-    \item Facilita la exploración y análisis de datos mediante funciones de búsqueda, filtrado y agregación, que permite a los usuarios investigar tendencias y patrones en los datos.
+    \item Permite crear \textbf{dashboards} altamente interactivos con gráficos y tablas que se pueden personalizar y explirar en tiempo real.
+    \item Admite una amplia variedad de fuentes de datos como \textbf{bases de datos} \textit{SQL} y \textit{NoSQL}, sistemas de \textbf{monitoreo} como \textit{Prometheus} y \textit{Graphite} y sistemas en la \textbf{nube} como \textit{AWS CloudWatch} y \textit{Google Stackdriver}.
+    \item Ofrece una amplia gama de opciones de \textbf{visualización} como gráficos de líneas, barras, dispersión, termómetros y más.
+    \item Aporta la posibilidad de crear \textbf{alertas} basadas en umbrales y condiciones definidas por los usuario capaces de notificar a través de correo electrónico u otros canales de comunicación.
+    \item Facilita la \textbf{exploración} y \textbf{análisis} de datos mediante funciones de búsqueda, filtrado y agregación, que permite a los usuarios investigar tendencias y patrones en los datos.
     \item Altamente seguro con sistemas basados en autenticación de usuarios y controles de acceso a datos basados en roles.
 \end{itemize}
 
-Según estas características algunos casos de uso son los siguientes:
+Según estas características algunos \textbf{casos de uso} son los siguientes:
 
 \begin{enumerate}
-    \item Monitoreo de infraestructura: supervisar el rendimiento de servidores, redes y bases de datos, identificando problemas y optimizando recursos.
-    \item Visualización de métricas de aplicaciones: rastrea el rendimiento, identifica cuellos de botella y mejora la experiencia del usuario.
-    \item Análisis de registros: correlacionar datos de registros con métricas para investigar problemas y tendencias en sistemas distribuidos.
-    \item Observabilidad de microservicios: monitorizar la salud y rendimiento de estos para identificar problemas de comunicación entre servicios.
-    \item Seguridad informática: visualizar datos de seguridad, como registros de acceso, eventos de autenticación y actividad sospechosa, para detectar y responder a las amenazas de manera más eficiente.
+    \item \textbf{Monitoreo} de infraestructura: supervisar el rendimiento de servidores, redes y bases de datos, identificando problemas y optimizando recursos.
+    \item \textbf{Visualización} de métricas de aplicaciones: rastrea el rendimiento, identifica cuellos de botella y mejora la experiencia del usuario.
+    \item \textbf{Análisis} de registros: correlacionar datos de registros con métricas para investigar problemas y tendencias en sistemas distribuidos.
+    \item \textbf{Observabilidad} de microservicios: monitorizar la salud y rendimiento de estos para identificar problemas de comunicación entre servicios.
+    \item \textbf{Seguridad} informática: visualizar datos de seguridad, como registros de acceso, eventos de autenticación y actividad sospechosa, para detectar y responder a las amenazas de manera más eficiente.
 \end{enumerate}
 
 \section{Instalación Grafana}
 
-Para realizar la instalación de Grafana en su versión Standalone Linux Binaries, se ejecutaron los siguientes comandos, que descargarán y descomprimirán el archivo respectivamente:
+Para realizar la instalación de \textbf{Grafana} en su versión \textit{Standalone Linux Binaries}, se ejecutaron los siguientes comandos, que descargarán y descomprimirán el archivo respectivamente:\\
 
 \begin{lstlisting}[language=bash]
-- wget https://dl.grafana.com/enterprise/release/grafana-
-enterprise-11.5.2.linux-amd64.tar.gz
-- tar -zxvf grafana-enterprise-11.5.2.linux-amd64.tar.gz
+wget https://dl.grafana.com/enterprise/release/grafana-enterprise-11.5.2.linux-amd64.tar.gz
+tar -zxvf grafana-enterprise-11.5.2.linux-amd64.tar.gz
 \end{lstlisting}
 
-Una vez descomprimido todo se debe de iniciar el servidor con el comando \lstinline[language=bash]|stemctl start grafana-server.service| 
+\vspace{0.4cm}
+Una vez descomprimido todo se debe de \textbf{iniciar el servidor} ejecutando el 
+comando \lstinline[language=bash]|systemctl start grafana-server.service| 
 y podemos confirmar que se ha iniciado si ejecutamos \lstinline[language=bash]|systemctl status grafana-server.service|.\\
 
-Con el servidor de Grafana en funcionamiento, se puede acceder a este mediante la URL  ''http://virtual.lab.inf.uva.es:31222'' (en nuestro caso).
+Con el servidor de Grafana en funcionamiento, se puede acceder a este mediante la \textbf{URL}  ''http://virtual.lab.inf.uva.es:31222'' (en nuestro caso).
 
 \section{Base de datos}
 
-Grafana necesita estar conectada a una base de datos para poder crear sus tablas y esquemas para mostrar los valores que se almacenan en ellas. Utilizaremos MySQL, en donde Grafana puede utilizarlo de dos maneras distintas:
+\textbf{Grafana} necesita estar conectada a una base de datos para poder crear sus tablas y esquemas para mostrar los valores que se almacenan en ellas. Utilizaremos MySQL, en donde Grafana puede utilizarlo de dos maneras distintas:
 
 \begin{itemize}
     \item Como base de datos interna de Grafana, para usuarios y permisos, dashboards y paneles o ajustes o auditorías.
@@ -114,12 +125,12 @@ A continuación se muestra el diagrama que ilustra la estructura de la base de d
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\linewidth]{DiagramaDB.png}
+    \includegraphics[width=0.75\linewidth]{DiagramaDB.png}
     \caption{Diagrama de la Base de Datos}
     \label{fig:diagrama-DB}
 \end{figure}
 \newpage
-Para una mejor comprensión del esquema, se proporciona a continuación una breve descripción de cada tabla y los atributos que la componen:\\
+Para una mejor comprensión del esquema, se proporciona a continuación una breve descripción de cada tabla y los atributos que la componen:
 
 \begin{enumerate}
     \item \textbf{CPU:} Tabla para almacenar información sobre el uso del procesador (CPU).
@@ -155,7 +166,7 @@ Para una mejor comprensión del esquema, se proporciona a continuación una brev
         \item \textbf{nombre}: Nombre del proceso.
         \item \textbf{ruta}: Ruta del ejecutable del proceso.
         \item \textbf{hilos}: Número de hilos del proceso.
-        \item \textbf{estado}: Estado del proceso ("ejecutándose", "inactivo","durmiendo",etc).
+        \item \textbf{estado}: Estado del proceso (''ejecutándose", ''inactivo", "durmiendo", etc).
     \end{itemize}
     \item \textbf{Num\_procesos:} Tabla para almacenar el número total de procesos en ejecución.
     \begin{itemize}
@@ -199,17 +210,15 @@ Para una mejor comprensión del esquema, se proporciona a continuación una brev
 \end{enumerate}
 
 \subsection{Conexión a la base de datos}\label{subsec:conexión-db}
-Este código define una conexión con la base de datos \textbf{MySQL} en Ubuntu. El script está desarrollado en Python y maneja tanto la conexión con la base de datos como su cierre.
+Este código define una conexión con la base de datos \textbf{MySQL} en Ubuntu. El script está desarrollado en Python y maneja tanto la conexión con la base de datos como su cierre.\\
 
 \begin{lstlisting}[language=python]
 def get_connection():
     try:
         """
-        Establece una conexión con la base de datos MariaDB
-        utilizando los parámetros proporcionados.
+        Establece una conexión con la base de datos MariaDB utilizando los parámetros proporcionados.
                 
-        return: Devuelve un objeto de tipo conexión a la base
-        de datos si la conexión es exitosa.
+        return: Devuelve un objeto de tipo conexión a la base de datos si la conexión es exitosa.
                 Si ocurre un error, devuelve None.
         """
         connection = pymysql.connect(
@@ -226,7 +235,8 @@ def get_connection():
         print("Error al conectarse a la base de datos:" + str(e))
         return None
 \end{lstlisting}
-\newpage
+
+\vspace{0.4cm}
 Explicación:
 
 \begin{itemize}
@@ -236,7 +246,7 @@ Explicación:
 
 \subsection{Iniciar la base de datos en el servidor}
 
-Para iniciar la base de datos en el servidor es necesario acceder como root con el comando \lstinline{sudo -i}. A continuación ejecutamos los siguientes comandos:
+Para \textbf{iniciar} la base de datos en el servidor es necesario acceder como root con el comando \lstinline{sudo -i}. A continuación ejecutamos los siguientes comandos:
 
 \begin{itemize}
     \item \lstinline{mysql} $ \rightarrow $ abre el cliente de línea de comandos de MySQL, permitiendo interactuar con la base de datos.
@@ -257,14 +267,13 @@ Lo primero que se puede ver en el script es el comando \lstinline{DROP TABLE IF 
 
 El siguiente comando distinto es \lstinline{DROP PROCEDURE IF EXISTS}, que tiene una función similar a \lstinline{DROP TABLE}, pero aplicada a procedimientos almacenados.\\
 
-Las tablas de la base de datos tiene en común que su clave primaria es el 'timestamp', que es una marca de tiempo que representa un momento específico. Debido a que no puede haber dos momentos de tiempo es un atributo ideal para ser la clave primaria de cada tabla.\\
+Las tablas de la base de datos tiene en común que su \textbf{clave primaria} es el 'timestamp', que es una marca de tiempo que representa un momento específico. Debido a que no puede haber dos momentos de tiempo es un atributo ideal para ser la clave primaria de cada tabla.\\
 
-Más allá de la clave primaria, en cada tabla se recogen distintos tipos de datos según lo que se quiere recopilar, como datos de tipo INT, FLOAT, VARCHAR(255), que todos estos tienen la peculiaridad de que no pueden ser un valor nulo.\\
-\newpage
-Además, en este script se define el procedimiento 'AddDatos', cuya declaración es la siguiente: 
+Más allá de la clave primaria, en cada tabla se recogen distintos \textbf{tipos} de datos según lo que se quiere recopilar, como datos de tipo INT, FLOAT, VARCHAR(255), que todos estos tienen la peculiaridad de que no pueden ser un valor nulo.\\
+
+Además, en este script se define el procedimiento 'AddDatos', cuya declaración es la siguiente:\\
 
 \begin{lstlisting}[language=sql]
-
 CREATE PROCEDURE `AddDatos` (
     IN `carga_cpu` FLOAT,
     IN `frecuencia_cpu` FLOAT,
@@ -289,11 +298,12 @@ CREATE PROCEDURE `AddDatos` (
 )
 \end{lstlisting}
 
-El procedimiento acepta varios parámetros de entrada (IN) que representan los datos de rendimiento del servidor (excepto los valores correspondientes a las tablas interfaces y procesos).\\
+\vspace{0.4cm}
+El procedimiento acepta varios \textbf{parámetros de entrada} (IN) que representan los datos de rendimiento del servidor (excepto los valores correspondientes a las tablas interfaces y procesos).\\
 
-Una vez recibidos estos parámetros, 'AddDatos' calcula la marca de tiempo actual que registrará en qué momento se han recopilado los datos. Además, define un manejador de errores que se activa si ocurre alguna excepción SQL durante la ejecución del procedimiento.\\
+Una vez recibidos estos parámetros, 'AddDatos' calcula la marca de tiempo actual que registrará en qué momento se han recopilado los datos. Además, define un controlador de errores que se activa si ocurre alguna excepción SQL durante la ejecución del procedimiento.\\
 
-Posteriormente, comienza una transacción para asegurar que todas las operaciones de inserción se realicen con éxito o se reviertan en caso de error.\\
+Posteriormente, comienza una \textbf{transacción} para asegurar que todas las operaciones de inserción se realicen con éxito o se reviertan en caso de error.\\
 
 Comenzada la transacción, el procedimiento introduce los datos que ha recibido como parámetros en las tablas correspondientes (excepto en las tablas interfaces y procesos). También, antes de introducir los nuevos datos, borra los datos de las tablas  \textbf{CPU, Disco, Num\_procesos, Tiempo\_activo y Sistema} que estaban registrados anteriormente.\\
 
@@ -322,6 +332,7 @@ Group=usuario
 WantedBy=multi-user.target 
 \end{lstlisting}
 
+\vspace{0.4cm}
 Explicación:
 
 \begin{itemize}
@@ -334,52 +345,50 @@ Explicación:
 \subsection{Bucle while del servicio}\label{subsec:bucle-while}
 
 \begin{lstlisting}[language=python]
+# Configuración de conexión a la base de datos
 conn = None
 
 try:
-    
-    conn = get_connection()
+    conn = get_connection()  # Obtener la conexión a la base de datos
 
     if conn:
-        print("Conexion a la base de datos establecida
-        correctamente")
+        print("Conexión a la base de datos establecida correctamente")
+        # Obtener el tiempo que el servidor ha estado activo
+        boot_time = psutil.boot_time()  # Tiempo de arranque, momento en el que arrancó el servidor
 
-        """Ejecuta la recoleccion de datos e insercion 
-        en la BD en intervalos regulares"""
+        # Ejecuta la recolección e inserción de datos en intervalos regulares
         while True:
-            data = collect_data()
+            data = collect_data(boot_time)  # Llama a la función collect_data para recolectar los datos
             if data:
-                insert_data(data, conn)
+                insert_data(data, conn)  # Llama a la función insert_data para insertar los datos en la base de datos
 
-            time.sleep(5)  # Espera 10 segundos antes 
-            de la siguiente medicion
+            time.sleep(5)  # Espera 5 segundos antes de la siguiente medición
 except Error as e:
-    print(f"Error al conectar bas de datos: {e}")
+    print("Error al conectar con la base de datos:" + str(e))
 finally:
-    # Si la conexion fue establecida, cierra la conexion
-    if conn:  
-        # Cerrar la conexion al finalizar el programa
-        close_connection(conn)  
+    if conn:  # Si la conexión fue exitosa, se cierra
+        close_connection(conn)  # Cierra la conexión al finalizar el programa
 \end{lstlisting}
 
+\vspace{0.4cm}
 Explicación:
 
 \begin{itemize}
-    \item \textbf{Establecimiento de conexión}: Se establece la conexión con la base de datos mediante el método \textbf{get-connection()}, que se explica más adelante en la sección \autoref{subsec:conexión-db}.
+    \item \textbf{Establecimiento de conexión}: Se establece la conexión con la base de datos mediante el método \textbf{get-connection()}.
     \item \textbf{Comprobación de conexión}: Se verifica si la conexión fue exitosa.
     \item \textbf{Bucle while}: Este es un bucle infinito que estará activo mientras el servicio siga en ejecución. Dentro de este bucle:
     \begin{itemize}
-        \item Se recopilan datos utilizando el método \textbf{collect-data()}, que se explica más adelante en la sección \autoref{subsec:recolección-datos}.
-        \item Se insertan los datos recogidos en la base de datos con el método \textbf{insert\_data()}, que se explica más adelante en la sección \autoref{subsec:almacenamiento-datos}.
+        \item Se recopilan datos utilizando el método \textbf{collect-data()}.
+        \item Se insertan los datos recogidos en la base de datos con el método \textbf{insert\_data()}, que se explica más adelante en la sección.
         \item Se espera 5 segundos antes de repetir el proceso.
     \end{itemize}
     \item \textbf{Manejo de errores}: Captura posibles errores de conexión con la base de datos.
-    \item \textbf{Cierre de conexión}: Se cierra la conexión, si existe, dentro del bloque \texttt{finally} para evitar posibles fugas de recursos mediante el método \textbf{close\_connection(conn)}, que se explica más adelante en la sección \autoref{subsec:conexión-db}.
+    \item \textbf{Cierre de conexión}: Se cierra la conexión, si existe, dentro del bloque \texttt{finally} para evitar posibles fugas de recursos mediante el método \textbf{close\_connection(conn)}, que se explica más adelante en la sección.
 \end{itemize}
 
 \subsection{Recolección de datos}\label{subsec:recolección-datos}
 
-Para la recolección de datos se ha utilizado una librería de Python llamada \textbf{psutil}, que se encarga de obtener información de los procesos y utilización del sistema como puede ser la cpu, memoria, discos, redes o sensores y que funciona tanto en Windows, MacOS o Linux.
+Para la recolección de datos se ha utilizado una librería de Python llamada \textbf{psutil}, que se encarga de obtener información de los procesos y utilización del sistema como puede ser la cpu, memoria, discos, redes o sensores y que funciona tanto en Windows, MacOS o Linux.\\
 
 A continuación se hará un listado de las métricas recogidas con la librería psutil:
 
@@ -393,56 +402,45 @@ A continuación se hará un listado de las métricas recogidas con la librería 
     \item Número de conexiones de red activas si las hubiera  $ \rightarrow $ \lstinline{len(psutil.net_connections(kind='inet'))}
     \item Información detallada de los procesos en ejecución  $ \rightarrow $ para ello se creó una clase que recopilaba todos los detalles de los procesos:
     \begin{lstlisting}[language=python]
-        proc_detail = [
+# Obtener detalles de los procesos
+    proc_detail = [
         {
             "pid": proc.info["pid"],
             "name": proc.info["name"],
-            "exe": proc.info["exe"] 
-                if proc.info["exe"] 
-                else [{}]".format(proc.info["name"]),
+            "exe": proc.info["exe"] if proc.info["exe"] else "[{}]".format(proc.info["name"]),
             "status": proc.info["status"],
-            "username": proc.info["username"] 
-                if proc.info["username"] 
-                else "N/A",
+            "username": proc.info["username"] if proc.info["username"] else "N/A",
             "cpu_percent": proc.info["cpu_percent"],
             "memory_percent": proc.info["memory_percent"],
             "vsz": proc.memory_info().vms,
             "rss": proc.memory_info().rss,
             "num_thread": proc.num_threads()
         }
-        for proc in psutil.process_iter(['pid', 'name', 'exe',
-        'status', 'username', 'cpu_percent', 'memory_percent'])
-        #if proc.info["status"] == "running"
+        for proc in psutil.process_iter(['pid', 'name', 'exe', 'status', 'username', 'cpu_percent', 'memory_percent'])
     ]
     \end{lstlisting}
     \item Momento en el que se arrancó el servidor $ \rightarrow $ \lstinline{psutil.boot_time()}
     \item Información detallada de las interfaces de red $ \rightarrow $ para ello se creó una clase que recopilaba todos los detalles de las distintas interfaces de red:
     \begin{lstlisting}[language=python]
-    interfaces_info = []
-    for nombre_interfaz, interface_addreses in
-    psutil.net_if_addrs().items():
+interfaces_info = []
+    for nombre_interfaz, interface_addreses in psutil.net_if_addrs().items():
             direccion_mac = None
             direccion_ipv4 = None
             subnet = None
             broadcast = None
             net_io = psutil.net_io_counters(pernic=True)
+
             for address in interface_addreses:
-                if str(address.family) == 
-                'AddressFamily.AF_INET':
-                    direccion_ipv4 = address.address 
-                        if address.address else "IPv4"
-                    subnet = address.netmask 
-                        if address.netmask else "N/A"
-                    broadcast = address.broadcast 
-                        if address.broadcast else "N/A"
-                elif str(address.family) ==
-                'AddressFamily.AF_PACKET':
-                    direccion_mac = address.address 
-                        if address.address else "MAC"
-            bytes_enviados = net_io[nombre_interfaz].bytes_sent 
-                if nombre_interfaz in net_io else 0
-            bytes_recibidos = net_io[nombre_interfaz].bytes_recv
-                if nombre_interfaz in net_io else 0
+                if str(address.family) == 'AddressFamily.AF_INET':
+                    direccion_ipv4 = address.address if address.address else "IPv4"
+                    subnet = address.netmask if address.netmask else "N/A"
+                    broadcast = address.broadcast if address.broadcast else "N/A"
+                elif str(address.family) == 'AddressFamily.AF_PACKET':
+                    direccion_mac = address.address if address.address else "MAC"
+
+            bytes_enviados = net_io[nombre_interfaz].bytes_sent if nombre_interfaz in net_io else 0
+            bytes_recibidos = net_io[nombre_interfaz].bytes_recv if nombre_interfaz in net_io else 0
+
             if direccion_ipv4 or direccion_mac:
                 interfaces_info.append({
                     "nombre": nombre_interfaz,
@@ -473,6 +471,7 @@ La consulta realizada a la base de datos obtiene el valor de la carga actual de 
 SELECT carga FROM grafana.cpu;
 \end{lstlisting}
 
+\vspace{0.4cm}
 Esta consulta selecciona el campo `carga` de la tabla `cpu` en la base de datos de Grafana, lo que nos permite obtener el uso actual del procesador en un momento determinado.
 
 \begin{figure}[H]
@@ -494,6 +493,7 @@ La consulta utilizada es la siguiente:
 SELECT frecuencia FROM grafana.cpu;
 \end{lstlisting}
 
+\vspace{0.4cm}
 Esta consulta selecciona el campo `frecuencia` de la tabla `cpu`, obteniendo la frecuencia actual del procesador. Esto permite a los administradores verificar si la CPU está funcionando dentro de los rangos esperados o si está alcanzando valores críticos.
 
 \begin{figure}[H]
@@ -510,11 +510,10 @@ El uso de memoria RAM y SWAP se muestra en el panel de Grafana bajo una visualiz
 La consulta SQL utilizada para obtener estos valores es:
 
 \begin{lstlisting}[language=SQL]
-SELECT ram, swap, timestamp FROM grafana.memoria 
-WHERE timestamp >= now() - interval 5 minute
-ORDER BY timestamp ASC;
+SELECT ram, swap, timestamp FROM grafana.memoria WHERE timestamp >= now() - interval 5 minute ORDER BY timestamp ASC;
 \end{lstlisting}
 
+\vspace{0.4cm}
 Aquí se seleccionan los valores de `ram` y `swap`, junto con la marca de tiempo `timestamp`, filtrando solo los datos de los últimos cinco minutos y ordenándolos cronológicamente. Esto permite visualizar cómo ha cambiado el uso de la memoria en ese período de tiempo.
 
 \begin{figure}[H]
@@ -536,6 +535,7 @@ La consulta SQL utilizada es:
 SELECT espacio as "Usado", 100 - espacio as "Libre" FROM grafana.disco;
 \end{lstlisting}
 
+\vspace{0.4cm}
 Esta consulta calcula dinámicamente el espacio libre restando el valor `espacio` (usado) de 100, proporcionando así un desglose claro del almacenamiento.
 
 \begin{figure}[H]
@@ -552,11 +552,10 @@ Las operaciones de entrada y salida (E/S) se muestran en el panel de Grafana con
 La consulta SQL utilizada es:
 
 \begin{lstlisting}[language=SQL]
-SELECT * FROM grafana.entradasalida 
-WHERE timestamp >= now() - interval 5 minute
-ORDER BY timestamp ASC;
+SELECT * FROM grafana.entradasalida WHERE timestamp >= now() - interval 5 minute ORDER BY timestamp ASC;
 \end{lstlisting}
 
+\vspace{0.4cm}
 Esta consulta recupera todas las columnas de la tabla `entradasalida` para los últimos cinco minutos, lo que permite analizar la actividad reciente del disco.
 
 \begin{figure}[H]
@@ -568,20 +567,17 @@ Esta consulta recupera todas las columnas de la tabla `entradasalida` para los �
 
 \subsection{Bytes enviados y recibidos}
 
-Los bytes enviados y recibidos se muestran en Grafana en paneles de tipo ``Time Series'' con un gráfico de líneas. Esta representación facilita el seguimiento del tráfico de red a lo largo del tiempo. Además se muestran los últimos bytes tanto enviados como recibidos y la suma total de todos.
-\newpage
+Los bytes enviados y recibidos se muestran en Grafana en paneles de tipo ``Time Series'' con un gráfico de líneas. Esta representación facilita el seguimiento del tráfico de red a lo largo del tiempo. Además se muestran los últimos bytes tanto enviados como recibidos y la suma total de todos.\\
+
 Las consultas SQL utilizadas son:
 
 \begin{lstlisting}[language=SQL]
-SELECT bytes_enviados, timestamp FROM grafana.red
-WHERE timestamp >= now() - interval 5 minute
-ORDER BY timestamp ASC;
+SELECT bytes_enviados, timestamp FROM grafana.red WHERE timestamp >= now() - interval 5 minute ORDER BY timestamp ASC;
 
-SELECT bytes_recibidos, timestamp FROM grafana.red
-WHERE timestamp >= now() - interval 5 minute
-ORDER BY timestamp ASC;
+SELECT bytes_recibidos, timestamp FROM grafana.red WHERE timestamp >= now() - interval 5 minute ORDER BY timestamp ASC;
 \end{lstlisting}
 
+\vspace{0.4cm}
 Estas consultas seleccionan los bytes enviados y recibidos en los últimos cinco minutos, permitiendo detectar patrones de uso y posibles congestiones en la red.
 
 \begin{figure}[H]
@@ -608,6 +604,7 @@ La consulta SQL utilizada es:
 SELECT conexiones_activas as "Conexiones Activas" FROM grafana.red;
 \end{lstlisting}
 
+\vspace{0.4cm}
 Esta consulta obtiene el número de conexiones activas en tiempo real, lo que facilita la supervisión del tráfico en la red.
 
 \begin{figure}[H]
@@ -627,6 +624,7 @@ La consulta SQL utilizada es:
 SELECT numero, timestamp FROM grafana.num_procesos;
 \end{lstlisting}
 
+\vspace{0.4cm}
 Esta consulta proporciona el número actual de procesos, útil para detectar posibles sobrecargas en el sistema.
 
 \begin{figure}[H]
@@ -643,12 +641,10 @@ La lista de procesos en ejecución se muestra en Grafana en una tabla, lo que pe
 La consulta SQL utilizada es:
 
 \begin{lstlisting}[language=SQL]
-SELECT usuario as Usuario, pid as PID, cpu_percent as CPU,
-memory_percent as MEM, vsz as VSZ, rss as RSS, estado as Stat,
-nombre as Nombre, ruta as Comando, hilos as hilos 
-FROM grafana.procesos;
+SELECT usuario as Usuario, pid as PID, cpu_percent as CPU, memory_percent as MEM, vsz as VSZ, rss as RSS, estado as Stat, nombre as Nombre, ruta as Comando, hilos as hilos FROM grafana.procesos;
 \end{lstlisting}
 
+\vspace{0.4cm}
 Esta consulta obtiene una lista detallada de los procesos en ejecución en el sistema como lo haria el comando \textbf{ps aux} de Linux:
 
 \begin{itemize}
@@ -683,6 +679,7 @@ La consulta SQL utilizada es:
     SELECT sum(hilos) FROM grafana.procesos
 \end{lstlisting}
 
+\vspace{0.4cm}
 Esta consulta consigue la suma de todos los hilos que utilizan cada proceso que se encuentra en ejecución.
 
 \begin{figure}[H]
@@ -691,7 +688,7 @@ Esta consulta consigue la suma de todos los hilos que utilizan cada proceso que 
     \caption{Número de hilos totales}
     \label{fig:enter-label}
 \end{figure}
-\newpage
+
 \subsection{Estado de los procesos}
 
 El estado de los procesos es mostrado en Grafana en un panel de tipo ''Pie chart'', que representa una circunferencia dividida en secciones según el porcentaje de uso de cada sección.\\
@@ -707,13 +704,15 @@ Este panel está dividido en tres partes donde se muestra el porcentaje exacto e
 La consulta SQL utilizada es:
 
 \begin{lstlisting}[language=SQL]
-    SELECT 
-        COUNT(CASE WHEN estado = 'Idle' THEN 1 END) AS Idle,
-        COUNT(CASE WHEN estado = 'Running' THEN 1 END) AS Running,
-        COUNT(CASE WHEN estado = 'Sleeping' THEN 1 END) AS Sleeping
-    FROM grafana.procesos;
+SELECT 
+    COUNT(CASE WHEN estado = 'Idle' THEN 1 END) AS Idle,
+    COUNT(CASE WHEN estado = 'Running' THEN 1 END) AS Running,
+    COUNT(CASE WHEN estado = 'Sleeping' THEN 1 END) AS Sleeping
+FROM grafana.procesos;
 \end{lstlisting}
 
+
+\vspace{0.4cm}
 Esta consulta cuenta las veces que se repite cada estado de cada proceso. Por ejemplo, si el estado es 'Idle' devuelve un 1, sino es NULL.
 
 \begin{figure}[H]
@@ -730,15 +729,15 @@ El número de paquetes enviados y recibidos se muestra en Grafana en un panel de
 La consulta SQL utilizada es:
 
 \begin{lstlisting}[language=SQL]
-    SELECT paquetes_enviados as Enviados, 
-    paquetes_recibidos as Recibidos FROM grafana.red
+SELECT paquetes_enviados as Enviados, paquetes_recibidos as Recibidos FROM grafana.red
 \end{lstlisting}
 
+\vspace{0.4cm}
 Esta consulta muestra el número de paquetes enviados y recibidos que se almacena en la tabla de la red.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{paquetes_enviados_recibidos.png}
+    \includegraphics[width=0.7\linewidth]{paquetes_enviados_recibidos.png}
     \caption{Paquetes enviados y recibidos}
     \label{fig:enter-label}
 \end{figure}
@@ -750,10 +749,10 @@ El tiempo activo del servidor se muestra en Grafana en un panel de tipo ''Table'
 La consulta SQL que se ha utilizado es:
 
 \begin{lstlisting}[language=SQL]
-    SELECT dias, horas, minutos, segundos 
-    FROM grafana.tiempo_activo ORDER BY timestamp DESC LIMIT 1
+SELECT dias, horas, minutos, segundos FROM grafana.tiempo_activo ORDER BY timestamp DESC LIMIT 1
 \end{lstlisting}
 
+\vspace{0.4cm}
 Esta consulta muestra el último número de días, horas, minutos y segundos almacenados en la tabla de tiempo\_activo.
 
 \begin{figure}[H]
@@ -770,11 +769,10 @@ La información de las interfaces de red se muestra en Grafana en un panel de ti
 La consulta SQL que se ha utilizado es:
 
 \begin{lstlisting}[language=SQL]
-    SELECT nombre as Nombre, direccion as Dirección,
-        mascara as Máscara, mac as Mac 
-    FROM grafana.interfaces 
+SELECT nombre as Nombre, direccion as Dirección, mascara as Máscara, mac as Mac FROM grafana.interfaces 
 \end{lstlisting}
-\newpage
+
+\vspace{0.4cm}
 Esta consulta muestra la siguiente información de las interfaces de red:
 
 \begin{itemize}
@@ -802,11 +800,10 @@ Nuestro sistema tiene dos núcleos, por lo que el valor que se representa en nue
 La consulta SQL que se ha utilizado es:
 
 \begin{lstlisting}[language=SQL]
-    SELECT carga1 as 1minuto, carga5 as 5minutos, 
-        carga15 as 15minutos 
-    FROM grafana.sistema
+SELECT carga1 as 1minuto, carga5 as 5minutos, carga15 as 15minutos FROM grafana.sistema
 \end{lstlisting}
 
+\vspace{0.4cm}
 Esta consulta muestra el valor inmediato de la carga del sistema en 1, 5 y 15 minutos.
 
 \begin{figure}[H]
