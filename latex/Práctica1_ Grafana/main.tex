@@ -560,7 +560,75 @@ Explicación:
         \item Confirma la transacción con `\textbf{conn.commit()}`. Si hay algún error, revierte la transacción con `\textbf{conn.rollback()}`.
     \end{enumerate}
 \end{itemize}
+\section{Métricas de Rendimiento Adicionales}
 
+En adición a las medidas de rendimiento obligatorias, se han seleccionado las siguientes medidas adicionales para obtener una visión más completa del funcionamiento del sistema:
+
+\subsection{Hilos por Proceso y Número Total de Hilos}
+
+\textbf{Utilidad:}
+\begin{itemize}
+    \item Permite comprender la carga de trabajo a nivel de hilos, identificando cuellos de botella y problemas de concurrencia.
+    \item El número total de hilos en uso proporciona una visión general de la utilización de la CPU y la memoria.
+    \item Ayuda a diagnosticar problemas de rendimiento relacionados con la sobrecarga de hilos o la falta de paralelismo.
+    \item Se puede verificar si el sistema está utilizando de forma óptima los recursos disponibles.
+\end{itemize}
+
+\subsection{Estado de los Procesos (idle, running, sleeping)}
+
+\textbf{Utilidad:}
+\begin{itemize}
+    \item Ofrece una visión clara de la actividad de los procesos y la utilización de la CPU.
+    \item Permite identificar procesos que consumen demasiada CPU (running) o que están inactivos (idle) durante períodos prolongados.
+    \item Ayuda a detectar problemas de bloqueo o espera (sleeping) que pueden afectar el rendimiento.
+    \item Se puede verificar si el sistema está realizando las tareas de forma adecuada.
+\end{itemize}
+
+\subsection{Paquetes Enviados y Recibidos}
+
+\textbf{Utilidad:}
+\begin{itemize}
+    \item Proporciona información sobre el tráfico de red del sistema.
+    \item Permite identificar problemas de congestión de red o pérdida de paquetes.
+    \item Ayuda a diagnosticar problemas de rendimiento relacionados con la comunicación de red.
+    \item Es muy útil para verificar el funcionamiento de los servicios de red.
+\end{itemize}
+
+\subsection{Tiempo de Actividad del Sistema (uptime)}
+
+\textbf{Utilidad:}
+\begin{itemize}
+    \item Indica la estabilidad y disponibilidad del sistema.
+    \item Permite identificar reinicios inesperados o fallos del sistema.
+    \item Es útil para evaluar la fiabilidad del sistema a lo largo del tiempo.
+    \item Es una medida básica pero muy útil para verificar la estabilidad de un sistema.
+\end{itemize}
+
+\subsection{Interfaces de Red (IP, MAC, broadcast, bytes enviados y recibidos)}
+
+\textbf{Utilidad:}
+\begin{itemize}
+    \item Proporciona información detallada sobre la configuración y el tráfico de red de cada interfaz.
+    \item Permite identificar problemas de configuración de red o cuellos de botella en interfaces específicas.
+    \item Ayuda a diagnosticar problemas de rendimiento relacionados con la comunicación de red a nivel de interfaz.
+    \item Permite verificar si el sistema está utilizando las interfaces de red de forma adecuada, y si está habiendo un uso excesivo de alguna de ellas.
+\end{itemize}
+\subsection{Carga del Sistema}
+
+
+La carga del sistema mide el número promedio de procesos en ejecución o en espera de ejecución en un momento dado.
+
+\textbf{Utilidad:}
+\begin{itemize}
+    \item Indica la carga general del sistema.
+    \item Permite identificar momentos de alta carga que pueden afectar el rendimiento.
+    \item Ayuda a diagnosticar problemas de sobrecarga o cuellos de botella en la CPU.
+    \item En sistemas con múltiples núcleos, se puede comparar la carga con el número de núcleos para evaluar la utilización.
+    \item Permite verificar si el sistema está realizando las tareas de forma adecuada.
+\end{itemize}
+Además, hemos optado por recoger la carga del sistema de 1, 5 y 15 minutos. De esta forma pordemos identificar patrones y tendencias en la carga del sistema.
+Por ejemplo, si el valor de 1 minuto es más alto que los valores de 5 y 15 minutos, puede indicar un pico de carga puntual.
+Por el contrario, si los 3 valores son elevados, inidcaría que el sistema está sobrecargado de forma constante o durante un periodo de tiempo prolongado.
 
 \section{Visualización Grafana} \cite{grafana_mysql_docs} \cite{newsmatic_big_data}
 Antes de crear las tablas y gráficas en un Dashboard de Grafana, es necesario establecer la conexión con la base de datos \textbf{grafana}. Para ello, sigue estos pasos:
@@ -1011,6 +1079,7 @@ Cada miembro del equipo asumió responsabilidades específicas para garantizar u
         \item Funcionamiento del código (funciones y clases).
         \item Explicación del diagrama y estructura de la base de datos.
         \item Documentación de la conexión a la base de datos.
+        \item Explicación métricas adicionales.
     \end{itemize}
 \end{itemize}
 
@@ -1049,5 +1118,12 @@ En resumen, este proyecto ha demostrado la viabilidad y utilidad de utilizar \te
 
 \printbibliography
 
+\section{Anexo}
+
+\textbf{Credenciales}:
+\begin{itemize}
+    \item \textbf{Usuario}: profesor
+    \item \textbf{Contraseña}: esi25
+\end{itemize}
 
 \end{document}
