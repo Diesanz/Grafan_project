@@ -1,3 +1,9 @@
+-- Comandos para la creacion de las base de datos y los usuarios
+
+-- CREATE DATABASE grafana;
+-- CREATE USER 'grafanareader'@'localhost' IDENTIFIED BY 'Grupo6esi';
+-- GRANT ALL PRIVILEGIES ON grafana.* TO 'grafanareader'@'localhost';
+
 -- Eliminar las tablas si existen
 DROP TABLE IF EXISTS cpu;
 DROP TABLE IF EXISTS memoria;
